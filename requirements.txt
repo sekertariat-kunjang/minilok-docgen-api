@@ -1,0 +1,10 @@
+httpx
+python-dotenv
+fastapi
+uvicorn
+python-docx
+docxtpl
+python-multipart
+pydantic
+pandas
+openpyxl

@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.pyc
+error.log
+.DS_Store
+*.docx
+!templates/*.docx
+output/
+downloads/
