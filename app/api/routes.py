@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, File, UploadFile
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
 import os
 import io
 import uuid
@@ -25,7 +25,8 @@ router = APIRouter()
 
 @router.get("/")
 def root():
-    return {"message": "DocGen API (Modular) is running"}
+    index_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "static", "index.html")
+    return FileResponse(index_path)
 
 @router.get("/templates")
 def list_templates():

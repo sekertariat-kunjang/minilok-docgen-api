@@ -5,23 +5,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DocGen Test Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --success: #059669;
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.5);
+            --secondary: #a855f7;
+            --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text: #1e293b;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --surface: rgba(255, 255, 255, 0.05);
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+            --glass: rgba(255, 255, 255, 0.03);
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body {
-            font-family: 'Inter', -apple-system, system-ui, sans-serif;
-            background: var(--bg);
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
             color: var(--text);
             margin: 0;
             padding: 2rem 1rem;
@@ -33,114 +44,125 @@
 
         .container {
             background: var(--card-bg);
-            padding: 2.5rem;
-            border-radius: 16px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 3rem;
+            border-radius: 24px;
+            border: 1px solid var(--border);
             width: 100%;
-            max-width: 800px;
-            box-sizing: border-box;
+            max-width: 900px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
         }
 
         h2 {
-            font-size: 1.875rem;
+            font-size: 2.25rem;
             font-weight: 800;
-            color: var(--text);
-            text-align: center;
-            margin-bottom: 2rem;
-            letter-spacing: -0.025em;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2.5rem;
+            letter-spacing: -0.02em;
         }
 
         h3 {
             font-size: 1.25rem;
-            font-weight: 700;
-            margin-top: 0;
-            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 1.25rem;
         }
 
         .section {
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
+            padding: 1.75rem;
+            border-radius: 16px;
+            margin-bottom: 1.75rem;
+            background: var(--surface);
             border: 1px solid var(--border);
-            transition: all 0.2s;
         }
 
         .section:hover {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-color: rgba(99, 102, 241, 0.3);
+            background: rgba(255, 255, 255, 0.07);
+            transform: translateY(-2px);
         }
 
         .section-upload {
-            background: #f0f9ff;
-            border-color: #bae6fd;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), transparent);
             border-style: dashed;
         }
 
-        .section-bulk {
-            background: #fffbeb;
-            border-color: #fde68a;
-        }
-
-        .section-custom {
-            background: #f8fafc;
-        }
-
         .form-group {
-            margin-bottom: 1.25rem;
+            margin-bottom: 1.5rem;
         }
 
         label {
             display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 600;
+            margin-bottom: 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 700;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.025em;
+            letter-spacing: 0.1em;
         }
 
         input,
         select,
         textarea {
             width: 100%;
-            padding: 0.75rem 1rem;
+            padding: 0.875rem 1.25rem;
+            background: rgba(0, 0, 0, 0.2);
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 1rem;
-            background: white;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            color: #fff;
             outline: none;
+            font-family: inherit;
         }
 
         input:focus,
         select:focus,
         textarea:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+            background: rgba(0, 0, 0, 0.3);
         }
 
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
+            padding: 0.875rem 1.75rem;
+            border-radius: 12px;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s;
+            gap: 0.75rem;
             border: none;
-            gap: 0.5rem;
             white-space: nowrap;
+            font-family: inherit;
+            font-size: 0.95rem;
         }
 
         .btn-primary {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            width: 100%;
+            box-shadow: 0 10px 15px -3px var(--primary-glow);
         }
 
         .btn-primary:hover {
-            background: var(--primary-hover);
-            transform: translateY(-1px);
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px var(--primary-glow);
         }
 
         .btn-success {
@@ -153,75 +175,75 @@
             color: white;
         }
 
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-
         .btn-outline {
-            background: white;
+            background: transparent;
             border: 1px solid var(--border);
             color: var(--text);
         }
 
         .btn-outline:hover {
-            background: var(--bg);
+            background: var(--surface);
+            border-color: var(--text-muted);
         }
 
         .status {
-            margin-top: 1rem;
+            margin-top: 1.25rem;
             padding: 1rem;
-            border-radius: 8px;
+            border-radius: 12px;
             text-align: center;
-            font-size: 0.875rem;
-            font-weight: 500;
+            font-size: 0.9rem;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
             display: none;
         }
 
         .status-active {
             display: block;
+            animation: fadeIn 0.3s ease-out;
         }
 
-        .variables-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .var-badge {
-            background: #dcfce7;
-            color: #166534;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            padding: 0.4rem 0.875rem;
+            border-radius: 99px;
             font-size: 0.75rem;
-            font-weight: 600;
-            border: 1px solid #bbf7d0;
-            font-family: monospace;
+            font-weight: 700;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .dynamic-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.25rem;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
         }
 
         @media (max-width: 768px) {
-            .container {
-                padding: 1.5rem;
-            }
-
-            .dynamic-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .flex-responsive {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-            }
+            .container { padding: 1.5rem; }
+            .dynamic-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -956,7 +978,7 @@
             };
 
             try {
-                const response = await fetch('http://localhost:8000/generate-docx', {
+                const response = await fetch('/generate-docx', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
