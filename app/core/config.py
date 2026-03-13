@@ -4,8 +4,8 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-# Load environment variable from the minilok root .env file, mapping it to docgen-service's context
-env_path = BASE_DIR.parent / "minilok" / ".env"
+# Load environment variable from the minilok-docgen-api root .env file
+env_path = BASE_DIR / ".env"
 load_dotenv(dotenv_path=env_path)
 
 TEMPLATES_DIR = BASE_DIR / "templates"
