@@ -7,7 +7,8 @@
     <title>DocGen Test Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --primary: #6366f1;
@@ -199,12 +200,42 @@
 
         .status-active {
             display: block;
+            border: 1px solid var(--border);
             animation: fadeIn 0.3s ease-out;
         }
 
+        /* Improved Contrast for Highlighted Fields */
+        .ai-input {
+            background: #f5f3ff !important;
+            color: #1e1b4b !important;
+            border-color: #ddd6fe !important;
+            box-shadow: 0 0 15px rgba(124, 58, 237, 0.3) !important;
+        }
+
+        .profile-input {
+            background: #f0f9ff !important;
+            color: #0c4a6e !important;
+            border-color: #bae6fd !important;
+        }
+
+        textarea.val-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .ai-input::placeholder {
+            color: rgba(30, 27, 75, 0.4) !important;
+        }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .var-badge {
@@ -242,8 +273,13 @@
         }
 
         @media (max-width: 768px) {
-            .container { padding: 1.5rem; }
-            .dynamic-grid { grid-template-columns: 1fr; }
+            .container {
+                padding: 1.5rem;
+            }
+
+            .dynamic-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -612,12 +648,10 @@
                         // AUTO-FILL FROM PROFILE (Skip for AI fields)
                         if (!v.startsWith('ai_') && currentProfile[v]) {
                             input.value = currentProfile[v];
-                            input.style.borderColor = '#c084fc';
-                            input.style.background = '#faf5ff';
+                            input.classList.add('profile-input');
                         }
 
                         if (v.startsWith('ai_')) {
-                            input.style.borderColor = '#ddd6fe';
                             input.classList.add('ai-input');
                         }
 
@@ -670,7 +704,7 @@
             const aiInputs = document.querySelectorAll('.ai-input');
             aiInputs.forEach(input => {
                 input.value = "";
-                input.style.background = "white";
+                input.classList.remove('ai-input');
                 input.style.boxShadow = "none";
             });
 
@@ -810,9 +844,8 @@
                     const key = input.dataset.key;
                     if (result[key]) {
                         input.value = Array.isArray(result[key]) ? result[key].join('\n') : result[key];
-                        input.style.background = '#f5f3ff';
+                        input.classList.add('ai-input');
                         input.style.transition = 'all 0.5s';
-                        input.style.boxShadow = '0 0 10px #ddd6fe';
                     }
                 });
 
