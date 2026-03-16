@@ -17,6 +17,16 @@ class DocxProcessor:
         if not self.template_path.exists():
             raise FileNotFoundError(f"Template {template_name} not found")
         self.doc = DocxTemplate(str(self.template_path))
+        
+        # Monkeypatch patch_xml to be more robust against leftover 'tr ', 'tc ', etc. prefixes
+        original_patch_xml = self.doc.patch_xml
+        def robust_patch_xml(xml_src: str) -> str:
+            # 1. Standard docxtpl patching
+            patched_xml = original_patch_xml(xml_src)
+            # 2. Our extra robust tag patching
+            return patch_docx_tags(patched_xml)
+        
+        self.doc.patch_xml = robust_patch_xml
 
     def process_and_render(self, merged_data: Dict[str, Any]) -> io.BytesIO:
         # SOP Table Injection
@@ -34,7 +44,7 @@ class DocxProcessor:
         # but we can provide a jinja_env and pre-patch the internal XML if needed.
         # Actually, docxtpl 0.20.2 uses patch_xml internally. 
         # To be safe, we'll use a jinja_env from our helper.
-        self.doc.render(merged_data, jinja_env=get_jinja_env())
+        self.doc.render(merged_data)
         
         target_stream = io.BytesIO()
         self.doc.save(target_stream)
