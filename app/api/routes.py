@@ -69,7 +69,7 @@ async def generate_docx(request: DocRequest):
             target_stream,
             media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             headers={
-                "Content-Disposition": f'attachment; filename="{filename}"; filename*=UTF-8\'\'{encoded_filename}'
+                "Content-Disposition": f"attachment; filename=\"{filename}\"; filename*=UTF-8''{encoded_filename}"
             }
         )
     except FileNotFoundError as e:
@@ -167,7 +167,7 @@ async def generate_bulk(
             io.BytesIO(zip_content),
             media_type="application/x-zip-compressed",
             headers={
-                "Content-Disposition": f'attachment; filename="{zip_filename}"; filename*=UTF-8\'\'{encoded_zip_filename}'
+                "Content-Disposition": f"attachment; filename=\"{zip_filename}\"; filename*=UTF-8''{encoded_zip_filename}"
             }
         )
 

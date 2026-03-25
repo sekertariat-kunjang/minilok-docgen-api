@@ -10,6 +10,7 @@ class AIRequest(BaseModel):
     fields: List[str]
     metadata: Optional[Dict[str, Any]] = None
     context: Optional[str] = None
+    doc_type: Optional[str] = "sop" # 'sop' or 'sk'
 
 class SOPTableRequest(BaseModel):
     prosedur_steps: List[Any]

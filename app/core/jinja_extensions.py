@@ -50,11 +50,13 @@ def patch_docx_tags(xml_src: str) -> str:
                 return f"{row_start}{clean_tag}{row_end}"
 
     # 1. Handle row-level tags (tr) robustly
-    tr_pat = r'(<w:tr[ >](?:(?!<w:tr[ >]).)*?)(({%|{{)\s*tr\s+([^%}]*?)\s*(%}|}}))(.*?</w:tr>)'
+    # This pattern allows for XML noise (like <w:rPr>...) between delimiters and 'tr'
+    tr_pat = r'(<w:tr[ >](?:(?!<w:tr[ >]).)*?)(({%|{{)\s*(?:<[^>]+>\s*)*tr\s+([^%}]*?)\s*(%}|}}))(.*?</w:tr>)'
     xml_src = re.sub(tr_pat, fix_tr_logic, xml_src, flags=re.DOTALL)
 
     # 2. Fallback for other tags (tc, p, r) - just strip prefix
+    # Broaden to handle XML noise like <w:rPr> between the delimiter and the prefix
     for tag in ['tr', 'tc', 'p', 'r']:
-        xml_src = re.sub(r'({%|{{)\s*' + tag + r'\s+', r'\1 ', xml_src)
+        xml_src = re.sub(r'({%|{{)\s*(?:<[^>]+>\s*)*' + tag + r'\s+', r'\1 ', xml_src)
         
     return xml_src

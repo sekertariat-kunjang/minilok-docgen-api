@@ -47,14 +47,15 @@
             background: var(--card-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            padding: 3rem;
+            padding: 3.5rem;
             border-radius: 24px;
             border: 1px solid var(--border);
-            width: 100%;
-            max-width: 900px;
+            width: 95%;
+            max-width: 1240px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             position: relative;
             overflow: hidden;
+            margin: 0 auto;
         }
 
         .container::before {
@@ -72,6 +73,7 @@
             font-weight: 800;
             background: linear-gradient(to right, #fff, #94a3b8);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 2.5rem;
             letter-spacing: -0.02em;
@@ -238,811 +240,1150 @@
             }
         }
 
-        .var-badge {
-            background: rgba(16, 185, 129, 0.1);
-            color: #10b981;
-            padding: 0.4rem 0.875rem;
-            border-radius: 99px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            font-family: 'JetBrains Mono', monospace;
-        }
-
+        /* Grid System */
         .dynamic-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
             gap: 1.5rem;
+            width: 100%;
         }
 
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            .container {
+                padding: 2.5rem;
+            }
 
-        ::-webkit-scrollbar-track {
-            background: var(--bg);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-muted);
+            .dynamic-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 1rem 0.5rem;
+            }
+
             .container {
                 padding: 1.5rem;
+                width: 98%;
+                border-radius: 16px;
+            }
+
+            .tabs-header {
+                flex-wrap: wrap;
+                justify-content: center;
+                width: 100%;
+            }
+
+            .tab-btn {
+                flex: 1;
+                min-width: 140px;
+                justify-content: center;
             }
 
             .dynamic-grid {
                 grid-template-columns: 1fr;
             }
+
+            h2 {
+                font-size: 1.5rem;
+                text-align: center;
+            }
+
+            .flex-responsive {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* Tabs System */
+        .tabs-header {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            background: rgba(15, 23, 42, 0.4);
+            padding: 0.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            width: fit-content;
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1.25rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: transparent;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.85rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tab-btn:hover {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-btn.active {
+            color: #fff;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 4px 12px var(--primary-glow);
+        }
+
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .badge-count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.1rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+        }
+
+        /* Documentation Guide Styles */
+        .guide-section {
+            background: rgba(99, 102, 241, 0.05);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .guide-section.active {
+            display: block;
+        }
+
+        .guide-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .guide-item h4 {
+            font-size: 0.85rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .guide-item p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            color: var(--secondary);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-            <h2 style="margin-bottom: 0;">Document Generator</h2>
-            <button onclick="toggleProfile()" class="btn btn-outline" style="padding: 0.5rem 1rem;">
-                ⚙️ Profile Settings
-            </button>
-        </div>
-
-        <!-- Profile Settings (Collapsible) -->
-        <div id="profile-section" class="section" style="display: none; background: #faf5ff; border-color: #e9d5ff;">
-            <h3>Puskesmas Profile</h3>
-            <p style="font-size: 0.8rem; color: #6b21a8; margin-bottom: 1rem;">
-                Data here will automatically fill matching {{ variables }} in your templates.
-            </p>
-            <div class="dynamic-grid" id="profile-fields">
-                <div class="form-group">
-                    <label>Nama Puskesmas</label>
-                    <input type="text" id="p_nama_puskesmas" placeholder="e.g. Puskesmas Minilok">
-                </div>
-                <div class="form-group">
-                    <label>Kepala Puskesmas</label>
-                    <input type="text" id="p_kepala_puskesmas" placeholder="e.g. dr. Budi Santoso">
-                </div>
-                <div class="form-group">
-                    <label>NIP Kepala</label>
-                    <input type="text" id="p_nip_kepala" placeholder="e.g. 19800101...">
-                </div>
-                <div class="form-group">
-                    <label>Alamat</label>
-                    <input type="text" id="p_alamat_puskesmas" placeholder="e.g. Jl. Raya No. 123">
-                </div>
-            </div>
-            <button onclick="saveProfile()" class="btn btn-success" style="margin-top: 1rem; width: auto;">
-                Save Profile
-            </button>
-        </div>
-
-        <!-- Upload Section -->
-        <div class="section section-upload">
-            <label>Upload New Template (.docx)</label>
-            <div style="display: flex; gap: 0.5rem;" class="flex-responsive">
-                <input type="file" id="templateFile" accept=".docx">
-                <button onclick="uploadTemplate()" class="btn btn-success">Upload</button>
-            </div>
-            <div id="uploadStatus" class="status"></div>
-        </div>
-
-        <!-- Generation Section -->
-        <div class="section">
-            <div class="form-group">
-                <label for="template">Select Template</label>
-                <select id="template" onchange="toggleInputs()">
-                    <!-- Templates will be loaded here -->
-                </select>
-            </div>
-
-            <!-- AI Magic Context -->
-            <div id="ai-magic-container"
-                style="display: none; margin-top: 1.5rem; background: #f5f3ff; border: 1px dashed #c084fc; padding: 1.25rem; border-radius: 12px;">
-                <label style="color: #6b21a8; font-size: 0.75rem;">✨ AI Magic Context (Topic)</label>
-                <div style="display: flex; gap: 0.5rem;" class="flex-responsive">
-                    <input type="text" id="ai-instruction" placeholder="e.g. SOP Penanganan Pasien Pingsan di Parkiran"
-                        style="border-color: #ddd6fe;">
-                    <button onclick="generateAI(event)" class="btn"
-                        style="background: #7c3aed; color: white; width: auto; font-weight: 700; box-shadow: 0 4px 6px rgba(124, 58, 237, 0.2);">
-                        Magic Fill ✨
-                    </button>
-                    <button onclick="clearMagic()" class="btn btn-outline"
-                        style="color: #7c3aed; border-color: #ddd6fe; width: auto; font-size: 0.8rem;">
-                        🗑️ Clear Form
-                    </button>
-                </div>
-                <p style="font-size: 0.7rem; color: #7c3aed; margin-top: 0.5rem; margin-bottom: 0.75rem;">
-                    AI will automatically fill all fields starting with <b>ai_</b> based on this topic.
-                </p>
-
-                <!-- Context Injection for Akreditasi -->
-                <div style="margin-top: 0.5rem;">
-                    <label
-                        style="color: #6b21a8; font-size: 0.70rem; font-weight: 600; display: flex; align-items: center; gap: 4px;">
-                        <span>🧠</span> Opsional: Konteks / Pokok Pikiran (Akreditasi)
-                    </label>
-                    <textarea id="ai-context" rows="3"
-                        placeholder="Copy-paste Elemen Penilaian (EP) atau Pokok Pikiran Akreditasi di sini agar draft SOP 100% selaras dan akurat secara regulasi..."
-                        style="width: 100%; border-color: #ddd6fe; border-radius: 8px; font-size: 0.8rem; padding: 0.5rem; margin-top: 0.25rem; font-family: inherit; resize: vertical;"></textarea>
-                </div>
-            </div>
-
-            <!-- Dynamic Form Container -->
-            <div id="dynamic-form-container"
-                style="display: none; margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
-                <h3 style="margin-top: 1rem; font-size: 1rem;">Template Data Fields</h3>
-                <div id="dynamic-fields" class="dynamic-grid">
-                    <!-- Auto-generated inputs will go here -->
-                </div>
-            </div>
-
-            <!-- Old Hardcoded Sections (Kept as fallback or hidden) -->
-            <div id="sk-inputs" style="display: none;">
-                <!-- ... -->
-            </div>
-
-            <div id="variables-display" class="section"
-                style="display: none; background: #f0fdf4; border-color: #bbf7d0; margin-top: 2rem;">
-                <label style="color: #166534;">Detected Variables (Quick Reference):</label>
-                <div id="vars-list" class="variables-list">
-                    <!-- Variables will be inserted here -->
-                </div>
-            </div>
-
-            <!-- Official SOP Table Live Preview -->
-            <div id="flowchart-preview-section"
-                style="display: none; margin-top: 1.5rem; background: #0f172a; border-radius: 12px; padding: 1.5rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <label
-                        style="color: #60a5fa; margin: 0; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.08em;">📋
-                        Official SOP Table Preview (Formal Format)</label>
-                    <button onclick="refreshFlowchartPreview()"
-                        style="background: rgba(96,165,250,0.2); border: 1px solid rgba(96,165,250,0.4); color: #60a5fa; padding: 0.3rem 0.75rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 700;">🔄
-                        Refresh Table</button>
-                </div>
-                <div id="flowchart-img-container" style="text-align: center;">
-                    <p style="color: #64748b; font-size: 0.8rem;">Klik <b>🔄 Refresh</b> atau <b>Magic Fill</b> untuk
-                        melihat pratinjau tabel SOP resmi.</p>
-                </div>
-                <p
-                    style="color: #475569; font-size: 0.7rem; margin-top: 1rem; margin-bottom: 0; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.75rem;">
-                    ℹ️ Backend akan menggenerate gambar tabel formal ini dan memasukkannya ke placeholder <b>{{
-                        ai_flowchart }}</b> di Word.
-                </p>
-            </div>
-
-            <div style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap;">
-                <button onclick="refreshFlowchartPreview()" class="btn"
-                    style="flex: 1; background: #f5f3ff; color: #7c3aed; border: 2px solid #ddd6fe; font-weight: 700; min-width: 200px;">
-                    👁️ Preview Official Table 🔄
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="margin-bottom: 0;">Pusaka DocGen</h2>
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <button onclick="toggleGuide()" class="btn btn-outline"
+                    style="padding: 0.4rem 0.8rem; font-size: 0.75rem; border-radius: 8px; border-color: rgba(99,102,241,0.3); color: var(--primary);">
+                    📖 Quick Guide
                 </button>
-                <button onclick="generateDoc()" class="btn btn-primary" style="flex: 1; min-width: 200px;">
-                    Generate Single Document (.docx)
+                <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">
+                    <span id="system-status">●</span> System Online
+                </div>
+            </div>
+        </div>
+
+        <div id="user-guide" class="guide-section">
+            <h3 style="margin-top: 0; font-size: 1.1rem; color: #fff;">🚀 Cara Penggunaan & Metadata</h3>
+            <div class="guide-grid">
+                <div class="guide-item">
+                    <h4><span>🏷️</span> Tagging Placeholder</h4>
+                    <p>Gunakan format <code>{{ variable }}</code> di Word untuk data manual/profil (e.g.
+                        <code>{{ nomor_sk }}</code>). Untuk isian otomatis oleh AI, gunakan awalan <b>ai_</b> seperti
+                        <code>{{ ai_pembukaan }}</code>.
+                    </p>
+                </div>
+                <div class="guide-item">
+                    <h4><span>🧠</span> Konteks & Regulasi</h4>
+                    <p>Paste standar Akreditasi atau Pokok Pikiran ke dalam kotak <b>Konteks</b>. AI akan merancang isi
+                        SOP/SK agar 100% selaras dengan regulasi tersebut.</p>
+                </div>
+                <div class="guide-item">
+                    <h4><span>🔄</span> Workflow</h4>
+                    <p>1. <b>Upload</b> template Word ber-tag. <br>2. <b>Input</b> Topik & Konteks. <br>3. Klik <b>Magic
+                            Fill</b> & Review. <br>4. <b>Generate</b> Docx siap pakai.</p>
+                </div>
+                <!-- Advanced Section -->
+                <div class="guide-item"
+                    style="grid-column: 1 / -1; background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1); margin-top: 0.5rem;">
+                    <h4><span>📊</span> Advanced: Tabel & List Dinamis</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <p style="color: #60a5fa; font-weight: 600; margin-bottom: 0.25rem;">Tabel Prosedur (SOP):
+                            </p>
+                            <p style="color: #cbd5e1; font-size: 0.75rem; line-height: 1.4;">
+                                • Awal: <code>{% tr for itm in items %}</code> <br>
+                                • Isi: <code>{{ itm.langkah }}</code> <br>
+                                • Tutup: <code>{% tr endfor %}</code>
+                            </p>
+                        </div>
+                        <div>
+                            <p style="color: #f472b6; font-weight: 600; margin-bottom: 0.25rem;">Diktum/List (SK):</p>
+                            <p style="color: #cbd5e1; font-size: 0.75rem; line-height: 1.4;">
+                                • Awal: <code>{% p for d in ai_menetapkan %}</code> <br>
+                                • Isi: <code>{{ d }}</code> <br>
+                                • Tutup: <code>{% p endfor %}</code> <br>
+                                <i>*Ini akan membuat KESATU, KEDUA dst. secara dinamis.</i>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tabs-header">
+            <div class="tab-btn active" onclick="switchTab('sop')">
+                <span>📋</span> SOP Generator
+            </div>
+            <div class="tab-btn" onclick="switchTab('sk')">
+                <span>⚖️</span> SK Generator
+            </div>
+            <div class="tab-btn" onclick="switchTab('bulk')">
+                <span>📦</span> Bulk Generation
+            </div>
+            <div class="tab-btn" onclick="switchTab('admin')">
+                <span>⚙️</span> Settings & Tools
+            </div>
+        </div>
+
+        <div id="admin-pane" class="tab-pane">
+            <!-- Profile Settings -->
+            <div id="profile-section" class="section" style="background: #faf5ff; border-color: #e9d5ff;">
+                <h3>Puskesmas Profile</h3>
+                <p style="font-size: 0.8rem; color: #6b21a8; margin-bottom: 1rem;">
+                    Data here will automatically fill matching {{ variables }} in your templates.
+                </p>
+                <div class="dynamic-grid" id="profile-fields">
+                    <div class="form-group">
+                        <label>Nama Puskesmas</label>
+                        <input type="text" id="p_nama_puskesmas" placeholder="e.g. Puskesmas Minilok">
+                    </div>
+                    <div class="form-group">
+                        <label>Kepala Puskesmas</label>
+                        <input type="text" id="p_kepala_puskesmas" placeholder="e.g. dr. Budi Santoso">
+                    </div>
+                    <div class="form-group">
+                        <label>NIP Kepala</label>
+                        <input type="text" id="p_nip_kepala" placeholder="e.g. 19800101...">
+                    </div>
+                    <div class="form-group">
+                        <label>Alamat</label>
+                        <input type="text" id="p_alamat_puskesmas" placeholder="e.g. Jl. Raya No. 123">
+                    </div>
+                </div>
+                <button onclick="saveProfile()" class="btn btn-success" style="margin-top: 1rem; width: auto;">
+                    Save Profile
                 </button>
             </div>
-            <div id="status" class="status"></div>
-        </div>
 
-        <!-- Bulk Generation Section -->
-        <div class="section section-bulk">
-            <h3>Bulk Generation (Mail Merge)</h3>
-            <p style="font-size: 0.875rem; color: #b45309; margin-bottom: 1.25rem;">
-                Upload Excel/CSV to generate multiple documents at once.
-            </p>
-
-            <div class="form-group">
-                <label>1. Select Data File (.xlsx or .csv)</label>
+            <!-- Upload Section -->
+            <div class="section section-upload">
+                <label>Upload New Template (.docx)</label>
                 <div style="display: flex; gap: 0.5rem;" class="flex-responsive">
-                    <input type="file" id="bulkDataFile" accept=".xlsx,.xls,.csv">
-                    <button onclick="downloadSampleCSV()" class="btn btn-outline btn-sm" style="font-size: 0.75rem;">
-                        Get Sample CSV
+                    <input type="file" id="templateFile" accept=".docx">
+                    <button onclick="uploadTemplate()" class="btn btn-success">Upload</button>
+                </div>
+                <div id="uploadStatus" class="status"></div>
+            </div>
+        </div> <!-- End admin-pane -->
+
+        <div id="generator-container" class="tab-pane active">
+            <!-- Main Generator Section (Shared by SOP & SK) -->
+
+            <!-- Generation Section -->
+            <div class="section">
+                <div class="form-group">
+                    <label for="template">Select or Upload Template</label>
+                    <div style="display: flex; gap: 0.5rem;" class="flex-responsive">
+                        <select id="template" onchange="toggleInputs()" style="flex: 1;">
+                            <!-- Templates will be loaded here -->
+                        </select>
+                        <div style="position: relative; display: flex; gap: 0.5rem;">
+                            <input type="file" id="inlineTemplateFile" accept=".docx" style="display: none;"
+                                onchange="uploadTemplate(true)">
+                            <button onclick="document.getElementById('inlineTemplateFile').click()"
+                                class="btn btn-outline"
+                                style="width: auto; padding: 0.5rem 1rem; font-size: 0.8rem; border-color: var(--primary); color: var(--primary);">
+                                📤 Upload New
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Magic Context -->
+                <div id="ai-magic-container"
+                    style="display: none; margin-top: 1.5rem; background: #f5f3ff; border: 1px dashed #c084fc; padding: 1.25rem; border-radius: 12px;">
+                    <label style="color: #6b21a8; font-size: 0.75rem;">✨ AI Magic Context (Topic)</label>
+                    <div style="display: flex; gap: 0.5rem;" class="flex-responsive">
+                        <input type="text" id="ai-instruction" placeholder="e.g. SK Tim Mutu / SOP Penanganan Luka"
+                            style="border-color: #ddd6fe;">
+                        <button onclick="generateAI(event)" class="btn"
+                            style="background: #7c3aed; color: white; width: auto; font-weight: 700; box-shadow: 0 4px 6px rgba(124, 58, 237, 0.2);">
+                            Magic Fill ✨
+                        </button>
+                        <button onclick="clearMagic()" class="btn btn-outline"
+                            style="color: #7c3aed; border-color: #ddd6fe; width: auto; font-size: 0.8rem;">
+                            🗑️ Clear Form
+                        </button>
+                    </div>
+                    <p style="font-size: 0.7rem; color: #7c3aed; margin-top: 0.5rem; margin-bottom: 0.75rem;">
+                        AI will automatically fill all fields starting with <b>ai_</b> based on this topic.
+                    </p>
+
+                    <!-- Context Injection for Akreditasi -->
+                    <div style="margin-top: 0.5rem;">
+                        <label
+                            style="color: #6b21a8; font-size: 0.70rem; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                            <span>🧠</span> Opsional: Konteks / Pokok Pikiran (Akreditasi)
+                        </label>
+                        <textarea id="ai-context" rows="3"
+                            placeholder="Copy-paste Elemen Penilaian (EP) atau Pokok Pikiran Akreditasi di sini agar draft SOP 100% selaras dan akurat secara regulasi..."
+                            style="width: 100%; border-color: #ddd6fe; border-radius: 8px; font-size: 0.8rem; padding: 0.5rem; margin-top: 0.25rem; font-family: inherit; resize: vertical;"></textarea>
+                    </div>
+                </div>
+
+                <!-- Dynamic Form Container -->
+                <div id="dynamic-form-container"
+                    style="display: none; margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                    <h3 style="margin-top: 1rem; font-size: 1rem;">Template Data Fields</h3>
+                    <div id="dynamic-fields" class="dynamic-grid">
+                        <!-- Auto-generated inputs will go here -->
+                    </div>
+                </div>
+
+                <!-- Old Hardcoded Sections (Kept as fallback or hidden) -->
+                <div id="sk-inputs" style="display: none;">
+                    <!-- ... -->
+                </div>
+
+                <div id="variables-display" class="section"
+                    style="display: none; background: #f0fdf4; border-color: #bbf7d0; margin-top: 2rem;">
+                    <label style="color: #166534;">Detected Variables (Quick Reference):</label>
+                    <div id="vars-list" class="variables-list">
+                        <!-- Variables will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Official SOP Table Live Preview -->
+                <div id="flowchart-preview-section"
+                    style="display: none; margin-top: 1.5rem; background: #0f172a; border-radius: 12px; padding: 1.5rem;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <label
+                            style="color: #60a5fa; margin: 0; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.08em;">📋
+                            Official SOP Table Preview (Formal Format)</label>
+                        <button onclick="refreshFlowchartPreview()"
+                            style="background: rgba(96,165,250,0.2); border: 1px solid rgba(96,165,250,0.4); color: #60a5fa; padding: 0.3rem 0.75rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 700;">🔄
+                            Refresh Table</button>
+                    </div>
+                    <div id="flowchart-img-container" style="text-align: center;">
+                        <p style="color: #64748b; font-size: 0.8rem;">Klik <b>🔄 Refresh</b> atau <b>Magic Fill</b>
+                            untuk
+                            melihat pratinjau tabel SOP resmi.</p>
+                    </div>
+                    <p
+                        style="color: #475569; font-size: 0.7rem; margin-top: 1rem; margin-bottom: 0; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.75rem;">
+                        ℹ️ Backend akan menggenerate gambar tabel formal ini dan memasukkannya ke placeholder <b>{{
+                            ai_flowchart }}</b> di Word.
+                    </p>
+                </div>
+
+                <div style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button id="sop-preview-btn" onclick="refreshFlowchartPreview()" class="btn"
+                        style="flex: 1; background: #f5f3ff; color: #7c3aed; border: 2px solid #ddd6fe; font-weight: 700; min-width: 200px;">
+                        👁️ Preview Official Table 🔄
+                    </button>
+                    <button onclick="generateDoc()" class="btn btn-primary" style="flex: 1; min-width: 200px;">
+                        Generate Document (.docx)
                     </button>
                 </div>
-            </div>
+                <div id="status" class="status"></div>
+            </div> <!-- End generator-container -->
 
-            <button onclick="generateBulk()" class="btn btn-warning">
-                Process Bulk (ZIP)
-            </button>
-            <div id="bulkStatus" class="status"></div>
+            <!-- Bulk Generation Section -->
+            <div id="bulk-pane" class="tab-pane">
+                <div class="section section-bulk">
+                    <h3>Bulk Generation (Mail Merge)</h3>
+                    <p style="font-size: 0.875rem; color: #b45309; margin-bottom: 1.25rem;">
+                        Upload Excel/CSV to generate multiple documents at once.
+                    </p>
 
-            <div
-                style="margin-top: 1rem; font-size: 0.75rem; color: #b45309; border-top: 1px solid #fde68a; padding-top: 0.5rem;">
-                * Header di file Excel/CSV harus sama dengan {{ variable }} di Word.
-            </div>
-        </div>
-    </div>
+                    <div class="form-group">
+                        <label>1. Select Data File (.xlsx or .csv)</label>
+                        <div style="display: flex; gap: 0.5rem;" class="flex-responsive">
+                            <input type="file" id="bulkDataFile" accept=".xlsx,.xls,.csv">
+                            <button onclick="downloadSampleCSV()" class="btn btn-outline btn-sm"
+                                style="font-size: 0.75rem;">
+                                Get Sample CSV
+                            </button>
+                        </div>
+                    </div>
 
-    <script>
-        // Initial load
-        window.onload = async () => {
-            await loadProfile();
-            await loadTemplates();
-        };
+                    <button onclick="generateBulk()" class="btn btn-warning">
+                        Process Bulk (ZIP)
+                    </button>
+                    <div id="bulkStatus" class="status"></div>
 
-        let currentProfile = {};
+                </div>
+            </div> <!-- End bulk-pane -->
+        </div> <!-- End container -->
 
-        async function loadProfile() {
-            try {
-                const response = await fetch('/profile');
-                currentProfile = await response.json();
-
-                // Pre-fill profile UI
-                for (const key in currentProfile) {
-                    const el = document.getElementById('p_' + key);
-                    if (el) el.value = currentProfile[key];
-                }
-            } catch (e) {
-                console.error("Failed to load profile", e);
-            }
-        }
-
-        async function saveProfile() {
-            const data = {
-                nama_puskesmas: document.getElementById('p_nama_puskesmas').value,
-                kepala_puskesmas: document.getElementById('p_kepala_puskesmas').value,
-                nip_kepala: document.getElementById('p_nip_kepala').value,
-                alamat_puskesmas: document.getElementById('p_alamat_puskesmas').value
+        <script>
+            // Initial load
+            window.onload = async () => {
+                await loadProfile();
+                await loadTemplates();
+                // Initialize default tab filtering
+                switchTab('sop');
             };
 
-            try {
-                const response = await fetch('/profile', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                if (response.ok) {
-                    currentProfile = data;
-                    alert("Profile saved successfully!");
-                    toggleInputs(); // Re-sync form
-                }
-            } catch (e) {
-                alert("Error saving profile: " + e.message);
+// Centralized Download Helper
+            function downloadBlob(blob, filename) {
+                // Sanitize filename: alpha-numeric, underscores, dots, hyphens only
+                const cleanName = filename.replace(/[^a-zA-Z0-9._-]/g, '_');
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = cleanName;
+                document.body.appendChild(a);
+                a.click();
+                
+                // Keep the link and URL alive for 2 seconds to ensure browser captures the name
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                }, 2000);
             }
-        }
 
-        function toggleProfile() {
-            const sec = document.getElementById('profile-section');
-            sec.style.display = sec.style.display === 'none' ? 'block' : 'none';
-        }
+            let currentProfile = {};
+            let currentTemplates = [];
+            let currentTab = 'sop';
 
-        async function loadTemplates() {
-            try {
-                const response = await fetch('/templates');
-                const data = await response.json();
+            function resetForm() {
+                // Clear dynamic content
+                document.getElementById('template').value = "";
+                document.getElementById('dynamic-fields').innerHTML = '';
+                document.getElementById('dynamic-form-container').style.display = 'none';
+                document.getElementById('variables-display').style.display = 'none';
+                document.getElementById('ai-magic-container').style.display = 'none';
+                document.getElementById('flowchart-preview-section').style.display = 'none';
+
+                // Clear inputs
+                document.getElementById('ai-instruction').value = "";
+                document.getElementById('ai-context').value = "";
+
+                // Reset status
+                const statusLabel = document.getElementById('status');
+                if (statusLabel) {
+                    statusLabel.classList.remove('status-active');
+                    statusLabel.innerText = "";
+                }
+            }
+
+            function switchTab(tabId) {
+                currentTab = tabId;
+
+                // 1. Update Buttons
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.innerText.toLowerCase().includes(tabId)) btn.classList.add('active');
+                });
+
+                // 2. Reset Form State before switching
+                resetForm();
+
+                // 2. Handle Panes
+                const generator = document.getElementById('generator-container');
+                const admin = document.getElementById('admin-pane');
+                const bulk = document.getElementById('bulk-pane');
+
+                const allPanes = [generator, admin, bulk];
+                allPanes.forEach(p => { if (p) p.classList.remove('active'); });
+
+                if (tabId === 'sop' || tabId === 'sk') {
+                    if (generator) generator.classList.add('active');
+                    renderTemplateList(tabId);
+
+                    // UI Specifics
+                    const previewSec = document.getElementById('flowchart-preview-section');
+                    const previewBtn = document.getElementById('sop-preview-btn');
+
+                    if (tabId === 'sop') {
+                        if (previewBtn) previewBtn.style.display = 'block';
+                    } else {
+                        if (previewBtn) previewBtn.style.display = 'none';
+                        if (previewSec) previewSec.style.display = 'none';
+                    }
+
+                    // AI Context Placeholders
+                    const instructionInput = document.getElementById('ai-instruction');
+                    const contextInput = document.getElementById('ai-context');
+
+                    if (tabId === 'sk') {
+                        if (instructionInput) instructionInput.placeholder = "e.g. SK Tim Pencegahan Infeksi";
+                        if (contextInput) contextInput.placeholder = "Konteks peraturan dasar SK...";
+                    } else {
+                        if (instructionInput) instructionInput.placeholder = "e.g. SOP Penanganan Luka";
+                        if (contextInput) contextInput.placeholder = "Pokok Pikiran Akreditasi untuk SOP...";
+                    }
+                } else if (tabId === 'admin') {
+                    if (admin) admin.classList.add('active');
+                } else if (tabId === 'bulk') {
+                    if (bulk) bulk.classList.add('active');
+                }
+
+                // Sync profile data if needed
+                toggleInputs();
+
+                // Clear status
+                const statusLabel = document.getElementById('status');
+                if (statusLabel) statusLabel.classList.remove('status-active');
+            }
+
+            async function loadProfile() {
+                try {
+                    const response = await fetch('/profile');
+                    currentProfile = await response.json();
+
+                    // Pre-fill profile UI
+                    for (const key in currentProfile) {
+                        const el = document.getElementById('p_' + key);
+                        if (el) el.value = currentProfile[key];
+                    }
+                } catch (e) {
+                    console.error("Failed to load profile", e);
+                }
+            }
+
+            async function saveProfile() {
+                const data = {
+                    nama_puskesmas: document.getElementById('p_nama_puskesmas').value,
+                    kepala_puskesmas: document.getElementById('p_kepala_puskesmas').value,
+                    nip_kepala: document.getElementById('p_nip_kepala').value,
+                    alamat_puskesmas: document.getElementById('p_alamat_puskesmas').value
+                };
+
+                try {
+                    const response = await fetch('/profile', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    if (response.ok) {
+                        currentProfile = data;
+                        alert("Profile saved successfully!");
+                        toggleInputs(); // Re-sync form
+                    }
+                } catch (e) {
+                    alert("Error saving profile: " + e.message);
+                }
+            }
+
+            function toggleProfile() {
+                const sec = document.getElementById('profile-section');
+                sec.style.display = sec.style.display === 'none' ? 'block' : 'none';
+            }
+
+            function toggleGuide() {
+                const guide = document.getElementById('user-guide');
+                guide.classList.toggle('active');
+            }
+
+            async function loadTemplates(selectLast = false) {
+                try {
+                    const response = await fetch('/templates');
+                    const data = await response.json();
+                    currentTemplates = data.templates;
+                    renderTemplateList(currentTab);
+
+                    if (selectLast && currentTemplates.length > 0) {
+                        // After upload, we usually want to select the one we just uploaded
+                        // For now, let's just trigger selection if the list refreshed
+                    }
+                } catch (error) {
+                    console.error('Failed to load templates:', error);
+                }
+            }
+
+            function renderTemplateList(type, autoSelectName = null) {
                 const select = document.getElementById('template');
-                select.innerHTML = '';
+                select.innerHTML = '<option value="">-- Select Template --</option>';
 
-                if (data.templates.length === 0) {
-                    select.innerHTML = '<option value="">No templates found</option>';
+                const filtered = currentTemplates.filter(t => {
+                    const name = t.toLowerCase();
+                    if (type === 'sop') return name.includes('sop') || name.includes('pkm');
+                    if (type === 'sk') return name.startsWith('sk') || name.includes('sk_') || name.includes('sk-') || name.includes('keputusan');
+                    return true;
+                });
+
+                if (filtered.length === 0) {
+                    select.innerHTML = `<option value="">No ${type.toUpperCase()} templates found</option>`;
+                }
+
+                filtered.forEach(t => {
+                    const opt = document.createElement('option');
+                    opt.value = t;
+                    opt.innerText = t.charAt(0).toUpperCase() + t.slice(1).replace(/_/g, ' ');
+                    if (autoSelectName && t === autoSelectName) opt.selected = true;
+                    select.appendChild(opt);
+                });
+
+                // Trigger input toggle to reset fields
+                toggleInputs();
+            }
+
+            async function uploadTemplate(isInline = false) {
+                const fileInput = isInline ? document.getElementById('inlineTemplateFile') : document.getElementById('templateFile');
+                const statusDiv = document.getElementById('status');
+
+                if (!fileInput.files[0]) {
+                    alert("Please select a file first");
                     return;
                 }
 
-                data.templates.forEach(t => {
-                    const option = document.createElement('option');
-                    option.value = t;
-                    option.innerText = t.charAt(0).toUpperCase() + t.slice(1).replace(/_/g, ' ');
-                    select.appendChild(option);
-                });
-                toggleInputs();
-            } catch (error) {
-                console.error('Failed to load templates:', error);
-            }
-        }
+                const fileName = fileInput.files[0].name.replace('.docx', '');
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
 
-        async function uploadTemplate() {
-            const fileInput = document.getElementById('templateFile');
-            const statusDiv = document.getElementById('uploadStatus');
+                statusDiv.classList.add('status-active');
+                statusDiv.innerText = "Processing template & extracting fields...";
+                statusDiv.style.color = "#2563eb";
+                statusDiv.style.background = "#eff6ff";
 
-            if (!fileInput.files[0]) {
-                alert("Please select a file first");
-                return;
-            }
+                try {
+                    const response = await fetch('/upload-template', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
 
-            const formData = new FormData();
-            formData.append('file', fileInput.files[0]);
+                    if (response.ok) {
+                        statusDiv.innerText = "Template uploaded and mapped successfully!";
+                        statusDiv.style.color = "white";
+                        statusDiv.style.background = "var(--success)";
 
-            statusDiv.classList.add('status-active');
-            statusDiv.innerText = "Uploading...";
-            statusDiv.style.color = "#2563eb";
-            statusDiv.style.background = "#eff6ff";
+                        fileInput.value = '';
 
-            try {
-                const response = await fetch('/upload-template', {
-                    method: 'POST',
-                    body: formData
-                });
-                const result = await response.json();
+                        // Refresh templates and auto-select the new one
+                        await loadTemplates();
+                        renderTemplateList(currentTab, fileName);
 
-                if (response.ok) {
-                    statusDiv.innerText = "Upload successful!";
-                    statusDiv.style.color = "green";
-                    statusDiv.style.background = "#f0fdf4";
-                    fileInput.value = '';
-                    loadTemplates(); // Refresh list
-                } else {
-                    throw new Error(result.detail || "Upload failed");
-                }
-            } catch (error) {
-                statusDiv.innerText = error.message;
-                statusDiv.style.color = "red";
-                statusDiv.style.background = "#fef2f2";
-            }
-        }
-
-        async function toggleInputs() {
-            const template = document.getElementById('template').value;
-            if (!template) return;
-
-            const dynamicForm = document.getElementById('dynamic-form-container');
-            const dynamicFields = document.getElementById('dynamic-fields');
-            const varsDiv = document.getElementById('variables-display');
-            const listDiv = document.getElementById('vars-list');
-            const aiMagic = document.getElementById('ai-magic-container');
-            const statusDiv = document.getElementById('status');
-
-            try {
-                const response = await fetch(`/get-template-variables/${template}`);
-                const data = await response.json();
-
-                if (data.error) {
-                    dynamicForm.style.display = 'none';
-                    varsDiv.style.display = 'none';
-                    aiMagic.style.display = 'none';
-
-                    statusDiv.classList.add('status-active');
-                    statusDiv.innerText = "❌ Template Error: " + data.error;
+                    } else {
+                        throw new Error(result.detail || "Upload failed");
+                    }
+                } catch (error) {
+                    statusDiv.innerText = error.message;
                     statusDiv.style.color = "red";
                     statusDiv.style.background = "#fef2f2";
-                    return;
                 }
-
-                if (data.variables && data.variables.length > 0) {
-                    dynamicForm.style.display = 'block';
-                    varsDiv.style.display = 'block';
-                    dynamicFields.innerHTML = '';
-                    listDiv.innerHTML = '';
-
-                    const hasAIFields = data.variables.some(v => v.startsWith('ai_'));
-                    aiMagic.style.display = hasAIFields ? 'block' : 'none';
-
-                    data.variables.forEach(v => {
-                        // 1. Add to Badge List
-                        const span = document.createElement('span');
-                        span.className = 'var-badge';
-                        if (v.startsWith('ai_')) {
-                            span.style.background = '#f5f3ff';
-                            span.style.color = '#7c3aed';
-                            span.style.borderColor = '#ddd6fe';
-                            span.innerText = '✨ ' + v;
-                        } else {
-                            span.innerText = v;
-                        }
-                        listDiv.appendChild(span);
-
-                        // 2. Create Dynamic Input
-                        const group = document.createElement('div');
-                        group.className = 'form-group';
-                        group.style.marginBottom = '0.75rem';
-
-                        const label = document.createElement('label');
-                        label.style.fontSize = '0.7rem';
-                        label.innerText = v.replace(/_/g, ' ');
-                        if (v.startsWith('ai_')) label.style.color = '#7c3aed';
-
-                        const input = document.createElement('textarea');
-                        input.className = 'val-input';
-                        input.dataset.key = v;
-                        input.placeholder = v.startsWith('ai_') ? `AI will fill ${v}...` : `Enter ${v}...`;
-                        input.style.padding = '0.5rem';
-                        input.style.width = '100%';
-                        input.style.minHeight = '60px';
-                        input.style.resize = 'vertical';
-                        input.style.fontFamily = 'inherit';
-
-                        // AUTO-FILL FROM PROFILE (Skip for AI fields)
-                        if (!v.startsWith('ai_') && currentProfile[v]) {
-                            input.value = currentProfile[v];
-                            input.classList.add('profile-input');
-                        }
-
-                        if (v.startsWith('ai_')) {
-                            input.classList.add('ai-input');
-                        }
-
-                        group.appendChild(label);
-                        group.appendChild(input);
-                        dynamicFields.appendChild(group);
-                    });
-                } else {
-                    dynamicForm.style.display = 'none';
-                    varsDiv.style.display = 'none';
-                    aiMagic.style.display = 'none';
-                }
-                // Clear any leftover error if it's successful now
-                if (!data.error) {
-                    statusDiv.classList.remove('status-active');
-                    statusDiv.innerText = "";
-                }
-            } catch (e) {
-                console.error("Error fetching variables:", e);
-                statusDiv.classList.add('status-active');
-                statusDiv.innerText = "Error: " + e.message;
-                statusDiv.style.color = "red";
-                statusDiv.style.background = "#fef2f2";
             }
-        }
 
-        function addCustomField() {
-            const container = document.getElementById('custom-fields-container');
-            const fieldId = 'field-' + Date.now();
-            const div = document.createElement('div');
-            div.id = fieldId;
-            div.style.display = 'flex';
-            div.style.gap = '0.5rem';
-            div.style.marginBottom = '0.5rem';
-            div.innerHTML = `
+            async function toggleInputs() {
+                const template = document.getElementById('template').value;
+                if (!template) return;
+
+                const dynamicForm = document.getElementById('dynamic-form-container');
+                const dynamicFields = document.getElementById('dynamic-fields');
+                const varsDiv = document.getElementById('variables-display');
+                const listDiv = document.getElementById('vars-list');
+                const aiMagic = document.getElementById('ai-magic-container');
+                const statusDiv = document.getElementById('status');
+
+                try {
+                    const response = await fetch(`/get-template-variables/${template}`);
+                    const data = await response.json();
+
+                    if (data.error) {
+                        dynamicForm.style.display = 'none';
+                        varsDiv.style.display = 'none';
+                        aiMagic.style.display = 'none';
+
+                        statusDiv.classList.add('status-active');
+                        statusDiv.innerText = "❌ Template Error: " + data.error;
+                        statusDiv.style.color = "red";
+                        statusDiv.style.background = "#fef2f2";
+                        return;
+                    }
+
+                    if (data.variables && data.variables.length > 0) {
+                        dynamicForm.style.display = 'block';
+                        varsDiv.style.display = 'block';
+                        dynamicFields.innerHTML = '';
+                        listDiv.innerHTML = '';
+
+                        const hasAIFields = data.variables.some(v => v.startsWith('ai_'));
+                        aiMagic.style.display = hasAIFields ? 'block' : 'none';
+
+                        data.variables.forEach(v => {
+                            // 1. Add to Badge List
+                            const span = document.createElement('span');
+                            span.className = 'var-badge';
+                            if (v.startsWith('ai_')) {
+                                span.style.background = '#f5f3ff';
+                                span.style.color = '#7c3aed';
+                                span.style.borderColor = '#ddd6fe';
+                                span.innerText = '✨ ' + v;
+                            } else {
+                                span.innerText = v;
+                            }
+                            listDiv.appendChild(span);
+
+                            // 2. Create Dynamic Input
+                            const group = document.createElement('div');
+                            group.className = 'form-group';
+                            group.style.marginBottom = '0.75rem';
+
+                            const label = document.createElement('label');
+                            label.style.fontSize = '0.7rem';
+                            label.innerText = v.replace(/_/g, ' ');
+                            if (v.startsWith('ai_')) label.style.color = '#7c3aed';
+
+                            const input = document.createElement('textarea');
+                            input.className = 'val-input';
+                            input.dataset.key = v;
+                            input.placeholder = v.startsWith('ai_') ? `AI will fill ${v}...` : `Enter ${v}...`;
+                            input.style.padding = '0.5rem';
+                            input.style.width = '100%';
+
+                            // Larger text areas for SK fields
+                            if (v.includes('menimbang') || v.includes('mengingat') || v.includes('menetapkan')) {
+                                input.style.minHeight = '150px';
+                            } else {
+                                input.style.minHeight = '60px';
+                            }
+
+                            input.style.resize = 'vertical';
+                            input.style.fontFamily = 'inherit';
+
+                            // AUTO-FILL FROM PROFILE (Skip for AI fields)
+                            if (!v.startsWith('ai_') && currentProfile[v]) {
+                                input.value = currentProfile[v];
+                                input.classList.add('profile-input');
+                            }
+
+                            if (v.startsWith('ai_')) {
+                                input.classList.add('ai-input');
+                            }
+
+                            group.appendChild(label);
+                            group.appendChild(input);
+                            dynamicFields.appendChild(group);
+                        });
+                    } else {
+                        dynamicForm.style.display = 'none';
+                        varsDiv.style.display = 'none';
+                        aiMagic.style.display = 'none';
+                    }
+                    // Clear any leftover error if it's successful now
+                    if (!data.error) {
+                        statusDiv.classList.remove('status-active');
+                        statusDiv.innerText = "";
+                    }
+                } catch (e) {
+                    console.error("Error fetching variables:", e);
+                    statusDiv.classList.add('status-active');
+                    statusDiv.innerText = "Error: " + e.message;
+                    statusDiv.style.color = "red";
+                    statusDiv.style.background = "#fef2f2";
+                }
+            }
+
+            function addCustomField() {
+                const container = document.getElementById('custom-fields-container');
+                const fieldId = 'field-' + Date.now();
+                const div = document.createElement('div');
+                div.id = fieldId;
+                div.style.display = 'flex';
+                div.style.gap = '0.5rem';
+                div.style.marginBottom = '0.5rem';
+                div.innerHTML = `
                 <input type="text" class="custom-key" placeholder="Key (e.g. nama_kapus)" style="flex: 1; padding: 0.4rem; font-size: 0.8rem;">
                 <input type="text" class="custom-value" placeholder="Value" style="flex: 1; padding: 0.4rem; font-size: 0.8rem;">
                 <button onclick="removeField('${fieldId}')" style="width: auto; margin: 0; padding: 0.2rem 0.5rem; background: #ef4444; font-size: 0.8rem;">&times;</button>
             `;
-            container.appendChild(div);
-        }
-
-        function removeField(id) {
-            document.getElementById(id).remove();
-        }
-
-        function clearMagic() {
-            if (!confirm("Hapus semua data input dan preview?")) return;
-
-            const aiInputs = document.querySelectorAll('.ai-input');
-            aiInputs.forEach(input => {
-                input.value = "";
-                input.classList.remove('ai-input');
-                input.style.boxShadow = "none";
-            });
-
-            document.getElementById('ai-instruction').value = "";
-            document.getElementById('flowchart-preview-section').style.display = 'none';
-            globalSopTableData = null;
-        }
-
-        // ---------- AI MAGIC ----------
-        let globalSopTableData = null;
-
-        function extractStepsFromText(text) {
-            if (!text) return [];
-            // If text contains newlines, split by them first
-            let lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 5);
-
-            if (lines.length <= 1 && /\d+[\.\)]/.test(text)) {
-                const parts = text.split(/\s*(?:\d+[\.\)])\s*/).filter(p => p.trim().length > 5);
-                if (parts.length > 1) lines = parts;
+                container.appendChild(div);
             }
 
-            // Fallback split by Indonesian markers or bullets
-            if (lines.length <= 1) {
-                const searchMarkers = [/-\s/, /\*\s/, /•\s/, /;\s/];
-                for (let m of searchMarkers) {
-                    let parts = text.split(m).map(p => p.trim()).filter(p => p.length > 5);
-                    if (parts.length > 1) { lines = parts; break; }
-                }
+            function removeField(id) {
+                document.getElementById(id).remove();
             }
 
-            return lines.map(line => line.replace(/^\d+[\.\)\s]+/, '').trim());
-        }
+            function clearMagic() {
+                if (!confirm("Hapus semua data input dan preview?")) return;
 
-        async function refreshFlowchartPreview() {
-            // Re-extract data from current input values
-            const aiInputs = document.querySelectorAll('.ai-input');
-            let resultMap = {};
-            aiInputs.forEach(inp => resultMap[inp.dataset.key] = inp.value);
-
-            // Also check our hidden/global storage from last Magic Fill
-            const instruction = document.getElementById('ai-instruction').value.trim() || "SOP";
-            // Prioritize ai_flowchart as the source of steps (per user request)
-            const rawSteps = resultMap['ai_flowchart'] || resultMap['ai_prosedur'] || resultMap['ai_langkah_langkah'] || "";
-            const stepLines = extractStepsFromText(rawSteps);
-
-            if (stepLines.length === 0) {
-                alert('Tidak menemukan langkah-langkah. Pastikan Magic Fill sudah berjalan.');
-                return;
-            }
-
-            globalSopTableData = {
-                nama_sop: instruction.toUpperCase(),
-                pelaksana_labels: [currentProfile.jabatan || 'Petugas', 'Unit Terkait'],
-                prosedur_steps: stepLines.map(line => {
-                    const wMatch = line.match(/\[Waktu:\s*(.*?)\]/i);
-                    const oMatch = line.match(/\[Output:\s*(.*?)\]/i);
-                    const sMatch = line.match(/\[Syarat:\s*(.*?)\]/i);
-
-                    const langkah = line
-                        .replace(/\[Waktu:.*?\]/ig, '')
-                        .replace(/\[Output:.*?\]/ig, '')
-                        .replace(/\[Syarat:.*?\]/ig, '')
-                        .trim();
-
-                    return {
-                        langkah: langkah || line,
-                        waktu: wMatch ? wMatch[1].trim() : '-',
-                        output: oMatch ? oMatch[1].trim() : '-',
-                        syarat: sMatch ? sMatch[1].trim() : '-'
-                    };
-                })
-            };
-
-            await showFlowchartPreview(globalSopTableData);
-        }
-
-        async function showFlowchartPreview(tableData) {
-            const section = document.getElementById('flowchart-preview-section');
-            const container = document.getElementById('flowchart-img-container');
-            section.style.display = 'block';
-            container.innerHTML = '<p style="color:#60a5fa; font-size:0.85rem;">⏳ Merender tabel formal...</p>';
-            try {
-                const resp = await fetch('/generate-sop-flowchart-image', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(tableData)
-                });
-                if (!resp.ok) throw new Error(`Server error ${resp.status}`);
-                const blob = await resp.blob();
-                const url = URL.createObjectURL(blob);
-                container.innerHTML = `<img src="${url}" alt="SOP Table" style="max-width:100%; border-radius:8px; background:white; padding:8px;" />`;
-            } catch (e) {
-                container.innerHTML = `<p style="color:#f87171; font-size:0.8rem;">❌ Gagal render tabel: ${e.message}</p>`;
-            }
-        }
-
-        async function generateAI(event) {
-            const instruction = document.getElementById('ai-instruction').value.trim();
-            if (!instruction) {
-                alert("Please enter a topic/instruction for the AI magic.");
-                return;
-            }
-
-            const aiInputs = document.querySelectorAll('.ai-input');
-            const fields = Array.from(aiInputs).map(input => input.dataset.key);
-
-            if (fields.length === 0) {
-                alert("No fields detected for AI Magic.");
-                return;
-            }
-
-            const btn = event.currentTarget;
-            const originalText = btn.innerText;
-            btn.innerText = "✨ Magic working...";
-            btn.disabled = true;
-
-            const context = document.getElementById('ai-context') ? document.getElementById('ai-context').value.trim() : "";
-
-            try {
-                const response = await fetch('/generate-ai', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        instruction,
-                        fields,
-                        metadata: currentProfile,
-                        context: context || null
-                    })
-                });
-
-                if (!response.ok) throw new Error(await response.text());
-
-                const result = await response.json();
-
-                // Fill fields with animation
+                const aiInputs = document.querySelectorAll('.ai-input');
                 aiInputs.forEach(input => {
-                    const key = input.dataset.key;
-                    if (result[key]) {
-                        input.value = Array.isArray(result[key]) ? result[key].join('\n') : result[key];
-                        input.classList.add('ai-input');
-                        input.style.transition = 'all 0.5s';
-                    }
+                    input.value = "";
+                    input.classList.remove('ai-input');
+                    input.style.boxShadow = "none";
                 });
 
-                // --- FORMAL TABLE DATA PREPARATION ---
-                // We use ai_flowchart as the primary source for steps
-                const rawSteps = result['ai_flowchart'] || result['ai_prosedur'] || result['ai_langkah_langkah'] || "";
-                let stepLines = Array.isArray(rawSteps) ? rawSteps : extractStepsFromText(rawSteps);
+                document.getElementById('ai-instruction').value = "";
+                document.getElementById('flowchart-preview-section').style.display = 'none';
+                globalSopTableData = null;
+            }
 
-                // Fallback if still empty
+            // ---------- AI MAGIC ----------
+            let globalSopTableData = null;
+
+            function extractStepsFromText(text) {
+                if (!text) return [];
+                // If text contains newlines, split by them first
+                let lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 5);
+
+                if (lines.length <= 1 && /\d+[\.\)]/.test(text)) {
+                    const parts = text.split(/\s*(?:\d+[\.\)])\s*/).filter(p => p.trim().length > 5);
+                    if (parts.length > 1) lines = parts;
+                }
+
+                // Fallback split by Indonesian markers or bullets
+                if (lines.length <= 1) {
+                    const searchMarkers = [/-\s/, /\*\s/, /•\s/, /;\s/];
+                    for (let m of searchMarkers) {
+                        let parts = text.split(m).map(p => p.trim()).filter(p => p.length > 5);
+                        if (parts.length > 1) { lines = parts; break; }
+                    }
+                }
+
+                return lines.map(line => line.replace(/^\d+[\.\)\s]+/, '').trim());
+            }
+
+            async function refreshFlowchartPreview() {
+                // Re-extract data from current input values
+                const aiInputs = document.querySelectorAll('.ai-input');
+                let resultMap = {};
+                aiInputs.forEach(inp => resultMap[inp.dataset.key] = inp.value);
+
+                // Also check our hidden/global storage from last Magic Fill
+                const instruction = document.getElementById('ai-instruction').value.trim() || "SOP";
+                // Prioritize ai_flowchart as the source of steps (per user request)
+                const rawSteps = resultMap['ai_flowchart'] || resultMap['ai_prosedur'] || resultMap['ai_langkah_langkah'] || "";
+                const stepLines = extractStepsFromText(rawSteps);
+
                 if (stepLines.length === 0) {
-                    stepLines = extractStepsFromText(result['ai_kualifikasi_pelaksana'] || "");
+                    alert('Tidak menemukan langkah-langkah. Pastikan Magic Fill sudah berjalan.');
+                    return;
                 }
 
                 globalSopTableData = {
                     nama_sop: instruction.toUpperCase(),
                     pelaksana_labels: [currentProfile.jabatan || 'Petugas', 'Unit Terkait'],
-                    steps: stepLines.map(line => ({
-                        langkah: line.replace(/^\d+[\.\)\s]+/, '').trim(),
-                        waktu: '2-5 Menit',
-                        output: 'Terselesaikan',
-                        syarat: 'Dokumen Terkait'
-                    }))
+                    prosedur_steps: stepLines.map(line => {
+                        const wMatch = line.match(/\[Waktu:\s*(.*?)\]/i);
+                        const oMatch = line.match(/\[Output:\s*(.*?)\]/i);
+                        const sMatch = line.match(/\[Syarat:\s*(.*?)\]/i);
+
+                        const langkah = line
+                            .replace(/\[Waktu:.*?\]/ig, '')
+                            .replace(/\[Output:.*?\]/ig, '')
+                            .replace(/\[Syarat:.*?\]/ig, '')
+                            .trim();
+
+                        return {
+                            langkah: langkah || line,
+                            waktu: wMatch ? wMatch[1].trim() : '-',
+                            output: oMatch ? oMatch[1].trim() : '-',
+                            syarat: sMatch ? sMatch[1].trim() : '-'
+                        };
+                    })
                 };
 
-                // Show formal table preview automatically if we have steps
-                if (stepLines.length > 0) {
-                    await showFlowchartPreview(globalSopTableData);
+                await showFlowchartPreview(globalSopTableData);
+            }
+
+            async function showFlowchartPreview(tableData) {
+                const section = document.getElementById('flowchart-preview-section');
+                const container = document.getElementById('flowchart-img-container');
+                section.style.display = 'block';
+                container.innerHTML = '<p style="color:#60a5fa; font-size:0.85rem;">⏳ Merender tabel formal...</p>';
+                try {
+                    const resp = await fetch('/generate-sop-flowchart-image', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(tableData)
+                    });
+                    if (!resp.ok) throw new Error(`Server error ${resp.status}`);
+                    const blob = await resp.blob();
+                    const url = URL.createObjectURL(blob);
+                    container.innerHTML = `<img src="${url}" alt="SOP Table" style="max-width:100%; border-radius:8px; background:white; padding:8px;" />`;
+                } catch (e) {
+                    container.innerHTML = `<p style="color:#f87171; font-size:0.8rem;">❌ Gagal render tabel: ${e.message}</p>`;
                 }
-                // -------------------------------------
-
-                btn.innerText = "✨ Magic Done!";
-                setTimeout(() => { btn.innerText = originalText; btn.disabled = false; }, 2000);
-
-            } catch (e) {
-                alert("AI Magic failed: " + e.message);
-                btn.innerText = originalText;
-                btn.disabled = false;
-            }
-        }
-
-
-        async function downloadSampleCSV() {
-            const template = document.getElementById('template').value;
-            if (!template) {
-                alert("Please select a template first");
-                return;
             }
 
-            try {
-                const response = await fetch(`/get-template-variables/${template}`);
-                const data = await response.json();
-
-                if (!data.variables || data.variables.length === 0) {
-                    alert("No variables detected in this template to create a sample.");
+            async function generateAI(event) {
+                const instruction = document.getElementById('ai-instruction').value.trim();
+                if (!instruction) {
+                    alert("Please enter a topic/instruction for the AI magic.");
                     return;
                 }
 
-                // Create CSV content (Header row)
-                const csvContent = data.variables.join(',') + '\n' +
-                    data.variables.map(v => `Sample ${v}`).join(',');
+                const aiInputs = document.querySelectorAll('.ai-input');
+                const fields = Array.from(aiInputs).map(input => input.dataset.key);
 
-                const blob = new Blob([csvContent], { type: 'text/csv' });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `Sample_${template}.csv`;
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-            } catch (e) {
-                alert("Error generating sample: " + e.message);
-            }
-        }
-
-        async function generateBulk() {
-            const template = document.getElementById('template').value;
-            const dataFile = document.getElementById('bulkDataFile').files[0];
-            const statusDiv = document.getElementById('bulkStatus');
-
-            if (!template || !dataFile) {
-                alert("Please select both a template and a data file (Excel/CSV)");
-                return;
-            }
-
-            statusDiv.classList.add('status-active');
-            statusDiv.innerText = "Processing bulk generation...";
-            statusDiv.style.color = "#b45309";
-            statusDiv.style.background = "#fffbeb";
-
-            const formData = new FormData();
-            formData.append('template_name', template);
-            formData.append('data_file', dataFile);
-
-            try {
-                const response = await fetch('/generate-bulk', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (!response.ok) {
-                    const result = await response.json();
-                    throw new Error(result.detail || 'Bulk generation failed');
+                if (fields.length === 0) {
+                    alert("No fields detected for AI Magic.");
+                    return;
                 }
 
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                const safeTemplateName = template.replace(/\s+/g, '_');
-                a.download = `Bulk_${safeTemplateName}.zip`;
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
+                const btn = event.currentTarget;
+                const originalText = btn.innerText;
+                btn.innerText = "✨ Magic working...";
+                btn.disabled = true;
 
-                statusDiv.innerText = "Success! ZIP file downloaded.";
-                statusDiv.style.color = "green";
-                statusDiv.style.background = "#f0fdf4";
-            } catch (error) {
-                statusDiv.innerText = "Error: " + error.message;
-                statusDiv.style.color = "red";
-                statusDiv.style.background = "#fef2f2";
-            }
-        }
+                const context = document.getElementById('ai-context') ? document.getElementById('ai-context').value.trim() : "";
 
-        async function generateDoc() {
-            const statusDiv = document.getElementById('status');
-            const template = document.getElementById('template').value;
+                try {
+                    const response = await fetch('/generate-ai', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            instruction,
+                            fields,
+                            metadata: currentProfile,
+                            context: context || null,
+                            doc_type: currentTab // Pass current tab as type (sop/sk)
+                        })
+                    });
 
-            if (!template) {
-                alert("Please select a template first");
-                return;
-            }
+                    if (!response.ok) throw new Error(await response.text());
 
-            statusDiv.classList.add('status-active');
-            statusDiv.innerText = "Generating...";
-            statusDiv.style.color = "#666";
-            statusDiv.style.background = "#f8fafc";
-
-            let data = {};
-            // Collect data from dynamic inputs
-            const inputs = document.querySelectorAll('.val-input');
-            inputs.forEach(input => {
-                data[input.dataset.key] = input.value;
-            });
-
-            // Include official table data if available
-            if (globalSopTableData) {
-                data['ai_sop_table_data'] = globalSopTableData;
-            }
-
-            // Fallback to old custom fields if any (though redundant now)
-            const customKeys = document.querySelectorAll('.custom-key');
-            const customValues = document.querySelectorAll('.custom-value');
-            customKeys.forEach((keyEl, index) => {
-                const key = keyEl.value.trim();
-                const val = customValues[index].value.trim();
-                if (key) data[key] = val;
-            });
-
-            const payload = {
-                template_name: template,
-                data: data
-            };
-
-            try {
-                const response = await fetch('/generate-docx', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
                     const result = await response.json();
-                    throw new Error(result.detail || 'Generation failed');
+
+                    // Fill fields with animation
+                    aiInputs.forEach(input => {
+                        const key = input.dataset.key;
+                        let val = result[key];
+                        if (val !== undefined && val !== null) {
+                            if (Array.isArray(val)) {
+                                input.value = val.join('\n');
+                            } else if (typeof val === 'object') {
+                                // Convert object to readable string (e.g. for diktums)
+                                input.value = Object.entries(val)
+                                    .map(([k, v]) => `${k}: ${v}`)
+                                    .join('\n');
+                            } else {
+                                input.value = val;
+                            }
+                            input.classList.add('ai-input');
+                            input.style.transition = 'all 0.5s';
+                        }
+                    });
+
+                    // --- FORMAL TABLE DATA PREPARATION ---
+                    // We use ai_flowchart as the primary source for steps
+                    const rawSteps = result['ai_flowchart'] || result['ai_prosedur'] || result['ai_langkah_langkah'] || "";
+                    let stepLines = Array.isArray(rawSteps) ? rawSteps : extractStepsFromText(rawSteps);
+
+                    // Fallback if still empty
+                    if (stepLines.length === 0) {
+                        stepLines = extractStepsFromText(result['ai_kualifikasi_pelaksana'] || "");
+                    }
+
+                    globalSopTableData = {
+                        nama_sop: instruction.toUpperCase(),
+                        pelaksana_labels: [currentProfile.jabatan || 'Petugas', 'Unit Terkait'],
+                        steps: stepLines.map(line => ({
+                            langkah: line.replace(/^\d+[\.\)\s]+/, '').trim(),
+                            waktu: '2-5 Menit',
+                            output: 'Terselesaikan',
+                            syarat: 'Dokumen Terkait'
+                        }))
+                    };
+
+                    // Show formal table preview automatically if we have steps
+                    if (stepLines.length > 0) {
+                        await showFlowchartPreview(globalSopTableData);
+                    }
+                    // -------------------------------------
+
+                    btn.innerText = "✨ Magic Done!";
+                    setTimeout(() => { btn.innerText = originalText; btn.disabled = false; }, 2000);
+
+                } catch (e) {
+                    alert("AI Magic failed: " + e.message);
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                }
+            }
+
+
+            async function downloadSampleCSV() {
+                const template = document.getElementById('template').value;
+                if (!template) {
+                    alert("Please select a template first");
+                    return;
                 }
 
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                const safeTemplateName = payload.template_name.replace(/\s+/g, '_');
-                a.download = `Generated_${safeTemplateName}.docx`;
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
+                try {
+                    const response = await fetch(`/get-template-variables/${template}`);
+                    const data = await response.json();
 
-                statusDiv.innerText = "Success! File downloaded.";
-                statusDiv.style.color = "green";
-                statusDiv.style.background = "#f0fdf4";
-            } catch (error) {
-                console.error(error);
-                statusDiv.innerText = "Error: " + error.message;
-                statusDiv.style.color = "red";
-                statusDiv.style.background = "#fef2f2";
+                    if (!data.variables || data.variables.length === 0) {
+                        alert("No variables detected in this template to create a sample.");
+                        return;
+                    }
+
+                    // Create CSV content (Header row)
+                    const csvContent = data.variables.join(',') + '\n' +
+                        data.variables.map(v => `Sample ${v}`).join(',');
+
+                    const blob = new Blob([csvContent], { type: 'text/csv' });
+                    downloadBlob(blob, `Sample_${template}.csv`);
+                } catch (e) {
+                    alert("Error generating sample: " + e.message);
+                }
             }
-        }
-    </script>
+
+            async function generateBulk() {
+                const template = document.getElementById('template').value;
+                const dataFile = document.getElementById('bulkDataFile').files[0];
+                const statusDiv = document.getElementById('bulkStatus');
+
+                if (!template || !dataFile) {
+                    alert("Please select both a template and a data file (Excel/CSV)");
+                    return;
+                }
+
+                statusDiv.classList.add('status-active');
+                statusDiv.innerText = "Processing bulk generation...";
+                statusDiv.style.color = "#b45309";
+                statusDiv.style.background = "#fffbeb";
+
+                const formData = new FormData();
+                formData.append('template_name', template);
+                formData.append('data_file', dataFile);
+
+                try {
+                    const response = await fetch('/generate-bulk', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        const result = await response.json();
+                        throw new Error(result.detail || 'Bulk generation failed');
+                    }
+
+                    const blob = await response.blob();
+                    const safeTemplateName = template.replace(/\s+/g, '_');
+                    downloadBlob(blob, `Bulk_${safeTemplateName}.zip`);
+
+                    statusDiv.innerText = "Success! ZIP file downloaded.";
+                    statusDiv.style.color = "green";
+                    statusDiv.style.background = "#f0fdf4";
+                } catch (error) {
+                    statusDiv.innerText = "Error: " + error.message;
+                    statusDiv.style.color = "red";
+                    statusDiv.style.background = "#fef2f2";
+                }
+            }
+
+            async function generateDoc() {
+                const statusDiv = document.getElementById('status');
+                const template = document.getElementById('template').value;
+
+                if (!template) {
+                    alert("Please select a template first");
+                    return;
+                }
+
+                statusDiv.classList.add('status-active');
+                statusDiv.innerText = "Generating...";
+                statusDiv.style.color = "#666";
+                statusDiv.style.background = "#f8fafc";
+
+                let data = {};
+                // Collect data from dynamic inputs
+                const inputs = document.querySelectorAll('.val-input');
+                inputs.forEach(input => {
+                    data[input.dataset.key] = input.value;
+                });
+
+                // Include official table data if available
+                if (globalSopTableData) {
+                    data['ai_sop_table_data'] = globalSopTableData;
+                }
+
+                // Fallback to old custom fields if any (though redundant now)
+                const customKeys = document.querySelectorAll('.custom-key');
+                const customValues = document.querySelectorAll('.custom-value');
+                customKeys.forEach((keyEl, index) => {
+                    const key = keyEl.value.trim();
+                    const val = customValues[index].value.trim();
+                    if (key) data[key] = val;
+                });
+
+                const payload = {
+                    template_name: template,
+                    data: data
+                };
+
+                try {
+                    const response = await fetch('/generate-docx', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const result = await response.json();
+                        throw new Error(result.detail || 'Generation failed');
+                    }
+
+                    const blob = await response.blob();
+                    const safeTemplateName = payload.template_name.replace(/\s+/g, '_');
+                    downloadBlob(blob, `Generated_${safeTemplateName}.docx`);
+
+                    statusDiv.innerText = "Success! File downloaded.";
+                    statusDiv.style.color = "green";
+                    statusDiv.style.background = "#f0fdf4";
+                } catch (error) {
+                    console.error(error);
+                    statusDiv.innerText = "Error: " + error.message;
+                    statusDiv.style.color = "red";
+                    statusDiv.style.background = "#fef2f2";
+                }
+            }
+        </script>
 </body>
 
 </html>

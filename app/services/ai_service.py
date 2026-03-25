@@ -10,8 +10,11 @@ async def generate_ai_content(request: AIRequest) -> dict:
 
     context_prompt = f"\n    Konteks/Pokok Pikiran Khusus:\n    {request.context}\n    (Pastikan SOP/dokumen yang Anda buat merujuk dan selaras 100% dengan Pokok Pikiran di atas.)" if request.context else ""
 
+    doc_type = (request.doc_type or "sop").lower()
+    persona = "ahli tata naskah regulasi/SK" if doc_type == "sk" else "ahli operasional/SOP"
+    
     system_prompt = f"""
-    Anda adalah asisten administrasi Puskesmas yang ahli.
+    Anda adalah asisten administrasi Puskesmas yang {persona}.
     Tugas Anda adalah mengisi field-field berikut berdasarkan instruksi user.
     
     Target Fields: {", ".join(request.fields)}
@@ -19,13 +22,18 @@ async def generate_ai_content(request: AIRequest) -> dict:
     Metadata: {json.dumps(request.metadata or {{}})}
     {context_prompt}
     
-    ATURAN:
+    ATURAN KHUSUS BERDASARKAN DOKUMEN ({doc_type.upper()}):
     1. Output HARUS dalam format JSON murni.
-    2. Isi data sesuai konteks Puskesmas Indonesia dan tata naskah dinas yang berlaku (format PermenpanRB/Akreditasi).
-    3. Untuk field 'ai_flowchart', berikan minimal 5-10 langkah kerja yang detail dan berurutan (prosedur) dalam bentuk teks berbaris atau array string. Ini akan digunakan untuk membuat tabel SOP resmi. 
-       PENTING: Di akhir SETIAP langkah, tambahkan tag informasi pendukung dalam format: [Waktu: <Estimasi Waktu>] [Output: <Hasil Langkah>] [Syarat: <Dokumen/Persyaratan>]. Contoh: "Petugas mendaftar pasien [Waktu: 5 Menit] [Output: Pasien terdaftar] [Syarat: KTP/BPJS]"
-    4. Jabatan pelaksana harus realistis (misal: Petugas Pendaftaran, Dokter, Perawat, Apoteker).
-    5. Jangan berikan penjelasan atau teks apapun di luar JSON.
+    2. JIKA SK: Gunakan bahasa hukum/regulasi Indonesia yang sangat formal dan hierarkis.
+       - 'ai_menimbang': Alasan hukum/pentingnya kebijakan.
+       - 'ai_mengingat': Daftar UU/Permenkes (minimal 3-5).
+       - 'ai_menetapkan': Diktum keputusan (Kesatu, Kedua, dst).
+    3. JIKA SOP: Gunakan bahasa instruksional yang jelas dan runut.
+       - 'ai_flowchart': Minimal 5-10 langkah kerja. 
+         Format: "Langkah deskripsi [Waktu: <Estimasi>] [Output: <Hasil>] [Syarat: <Dokumen>]"
+    4. PENTING: Untuk field yang berisi daftar atau poin-poin (seperti ai_menetapkan atau ai_flowchart), berikan output sebagai SATU STRING tunggal dengan setiap poin dipisahkan oleh karakter newline (\n), bukan sebagai array JSON atau object.
+    5. Untuk field lainnya: Berikan teks narasi yang profesional.
+    6. Jangan berikan penjelasan atau teks apapun di luar JSON.
     """
 
     async with httpx.AsyncClient() as client:
