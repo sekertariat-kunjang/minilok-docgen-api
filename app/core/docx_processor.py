@@ -44,7 +44,7 @@ class DocxProcessor:
         # but we can provide a jinja_env and pre-patch the internal XML if needed.
         # Actually, docxtpl 0.20.2 uses patch_xml internally. 
         # To be safe, we'll use a jinja_env from our helper.
-        self.doc.render(merged_data)
+        self.doc.render(merged_data, jinja_env=get_jinja_env())
         
         target_stream = io.BytesIO()
         self.doc.save(target_stream)

@@ -58,5 +58,9 @@ def patch_docx_tags(xml_src: str) -> str:
     # Broaden to handle XML noise like <w:rPr> between the delimiter and the prefix
     for tag in ['tr', 'tc', 'p', 'r']:
         xml_src = re.sub(r'({%|{{)\s*(?:<[^>]+>\s*)*' + tag + r'\s+', r'\1 ', xml_src)
-        
+    
+    # 3. Aggressive global fallback: strip any remaining 'tr ', 'tc ' at the start of tags
+    # This handles cases where the regexes above might have missed something due to complex XML noise
+    xml_src = re.sub(r'({%|{{)\s*(tr|tc|p|r)\s+', r'\1 ', xml_src)
+
     return xml_src

@@ -676,8 +676,16 @@
 
 // Centralized Download Helper
             function downloadBlob(blob, filename) {
+                // Ensure correct extension based on blob type if filename seems wrong
+                let finalName = filename;
+                if (blob.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && !finalName.toLowerCase().endsWith(".docx")) {
+                    finalName += ".docx";
+                } else if (blob.type === "application/x-zip-compressed" && !finalName.toLowerCase().endsWith(".zip")) {
+                    finalName += ".zip";
+                }
+
                 // Sanitize filename: alpha-numeric, underscores, dots, hyphens only
-                const cleanName = filename.replace(/[^a-zA-Z0-9._-]/g, '_');
+                const cleanName = finalName.replace(/[^a-zA-Z0-9._-]/g, '_');
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.style.display = 'none';
@@ -1378,9 +1386,14 @@
                     statusDiv.style.background = "#f0fdf4";
                 } catch (error) {
                     console.error(error);
-                    statusDiv.innerText = "Error: " + error.message;
+                    statusDiv.innerText = "❌ Gagal: " + error.message;
                     statusDiv.style.color = "red";
                     statusDiv.style.background = "#fef2f2";
+                    
+                    // Specific alert for Jinja errors to help user identify template issues
+                    if (error.message.includes("tag") || error.message.includes("syntax")) {
+                        alert("Terjadi kesalahan pada template Word Anda. Pastikan tag Jinja (seperti {{ variable }}) sudah benar dan tidak terpotong formatting Word.\n\nDetail: " + error.message);
+                    }
                 }
             }
         </script>
