@@ -12,55 +12,60 @@ def get_jinja_env():
 
 def patch_docx_tags(xml_src: str) -> str:
     """
-    Manually strip docxtpl prefixes like 'tr ', 'tc ', etc. from jinja tags.
-    docxtpl's internal patch_xml can be strict about spaces.
-    Example: {% tr for x in y %} -> {% for x in y %}
-    
-    This improved version also handles moving the tags outside the <w:tr> 
-    if the tag is intended for row repetition, preventing alternating empty rows.
+    HEAL AND CLEAN JINJA TAGS IN XML.
+    This is a super-robust version that handles split delimiters ({{ ... }} or {% ... %})
+    even if Word has inserted XML tags in the middle of them.
     """
     
+    # 1. HEAL SPLIT DELIMITERS
+    # Example: {<w:rPr>...</w:rPr>{  -> {{
+    xml_src = re.sub(r'\{\s*(?:<[^>]+>\s*)*\{', '{{', xml_src)
+    xml_src = re.sub(r'\}\s*(?:<[^>]+>\s*)*\}', '}}', xml_src)
+    xml_src = re.sub(r'\{\s*(?:<[^>]+>\s*)*%', '{%', xml_src)
+    xml_src = re.sub(r'%\s*(?:<[^>]+>\s*)*\}', '%}', xml_src)
+
+    # 2. STRIP XML INSIDE TAGS
+    # Find anything between {{ }} or {% %} and remove all <...> tags from it
+    def clean_inner_tag(m):
+        start, inner, end = m.groups()
+        # Remove all XML tags from inner content
+        clean_inner = re.sub(r'<[^>]+>', '', inner)
+        return f"{start}{clean_inner}{end}"
+
+    xml_src = re.sub(r'(\{\{|\{%)(.*?)(\}\}|%\})', clean_inner_tag, xml_src, flags=re.DOTALL)
+
+    # 3. FIX TR/TC/P/R LOGIC (Simplified and more robust)
     def fix_tr_logic(m):
-        row_start = m.group(1)
-        full_tag = m.group(2)
+        row_start = m.group(1) # <w:tr ...>
+        full_tag = m.group(2)  # {% tr for ... %}
         delim_start = m.group(3) # {% or {{
-        tag_content = m.group(4) # e.g. "for x in y"
+        tag_content = m.group(4) # for x in y (already cleaned of tr prefix by re.sub below)
         delim_end = m.group(5)   # %} or }}
-        row_end = m.group(6)
+        row_end = m.group(6)     # ... </w:tr>
         
-        # Check if row has OTHER meaningful text content besides tags and XML
-        # We strip XML tags, Jinja delimiters, and whitespace
-        other_content = re.sub(r'({%|{{|%}|}}|<[^>]+>)', '', row_start + row_end).strip()
+        # Strip prefixes from tag_content if they are still there
+        clean_content = re.sub(r'^\s*(tr|tc|p|r)\s+', '', tag_content)
+        clean_tag = f"{delim_start} {clean_content} {delim_end}"
         
-        clean_tag = f"{delim_start} {tag_content} {delim_end}"
+        # Check if row only contains this tag and noise
+        other_content = re.sub(r'({%|{{|%}|}}|<[^>]+>|\s)', '', row_start + row_end)
         
         if not other_content:
-            # Row only contains this tag (and maybe XML noise/whitespace)
-            # Replace entire row with the clean tag so it vanishes from layout
-            return clean_tag
+            return clean_tag # Replace entire row if it's just a loop tag
         else:
-            # Row has other content (e.g. {{ item.name }})
-            # Wrap the row with the tag
-            if any(k in tag_content for k in ['for', 'if']):
+            if any(k in clean_content for k in ['for', 'if']):
                 return f"{clean_tag}{row_start}{row_end}"
-            elif any(k in tag_content for k in ['endfor', 'endif', 'else']):
+            elif any(k in clean_content for k in ['endfor', 'endif', 'else']):
                 return f"{row_start}{row_end}{clean_tag}"
             else:
-                # Fallback: just strip in place
                 return f"{row_start}{clean_tag}{row_end}"
 
-    # 1. Handle row-level tags (tr) robustly
-    # This pattern allows for XML noise (like <w:rPr>...) between delimiters and 'tr'
-    tr_pat = r'(<w:tr[ >](?:(?!<w:tr[ >]).)*?)(({%|{{)\s*(?:<[^>]+>\s*)*tr\s+([^%}]*?)\s*(%}|}}))(.*?</w:tr>)'
+    # Handle 'tr' explicitly for row looping
+    tr_pat = r'(<w:tr[ >](?:(?!<w:tr[ >]).)*?)(({%|{{)\s*tr\s+([^%}]*?)\s*(%}|}}))(.*?</w:tr>)'
     xml_src = re.sub(tr_pat, fix_tr_logic, xml_src, flags=re.DOTALL)
 
-    # 2. Fallback for other tags (tc, p, r) - just strip prefix
-    # Broaden to handle XML noise like <w:rPr> between the delimiter and the prefix
+    # Global prefix stripping for any remaining tags
     for tag in ['tr', 'tc', 'p', 'r']:
-        xml_src = re.sub(r'({%|{{)\s*(?:<[^>]+>\s*)*' + tag + r'\s+', r'\1 ', xml_src)
-    
-    # 3. Aggressive global fallback: strip any remaining 'tr ', 'tc ' at the start of tags
-    # This handles cases where the regexes above might have missed something due to complex XML noise
-    xml_src = re.sub(r'({%|{{)\s*(tr|tc|p|r)\s+', r'\1 ', xml_src)
-
+        xml_src = re.sub(r'({%|{{)\s*' + tag + r'\s+', r'\1 ', xml_src)
+        
     return xml_src

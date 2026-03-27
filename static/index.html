@@ -588,6 +588,9 @@
                     </div>
                 </div>
 
+                <div id="template-health-status" style="display: none; margin-top: 1rem; padding: 0.75rem; border-radius: 8px; font-size: 0.8rem; border: 1px solid;">
+                </div>
+
                 <!-- Old Hardcoded Sections (Kept as fallback or hidden) -->
                 <div id="sk-inputs" style="display: none;">
                     <!-- ... -->
@@ -935,6 +938,7 @@
                 const aiMagic = document.getElementById('ai-magic-container');
                 const statusDiv = document.getElementById('status');
 
+                const healthStatus = document.getElementById('template-health-status');
                 try {
                     const response = await fetch(`/get-template-variables/${template}`);
                     const data = await response.json();
@@ -943,15 +947,21 @@
                         dynamicForm.style.display = 'none';
                         varsDiv.style.display = 'none';
                         aiMagic.style.display = 'none';
-
-                        statusDiv.classList.add('status-active');
-                        statusDiv.innerText = "❌ Template Error: " + data.error;
-                        statusDiv.style.color = "red";
-                        statusDiv.style.background = "#fef2f2";
+                        healthStatus.style.display = 'block';
+                        healthStatus.style.background = '#fef2f2';
+                        healthStatus.style.borderColor = '#fecaca';
+                        healthStatus.style.color = '#991b1b';
+                        healthStatus.innerHTML = `❌ <b>Template Corrupt:</b> ${data.error}<br><small>Gunakan perbaikan otomatis saya atau cek kembali tag di Word.</small>`;
                         return;
                     }
 
-                    if (data.variables && data.variables.length > 0) {
+                    if (data.variables) {
+                        healthStatus.style.display = 'block';
+                        healthStatus.style.background = '#f0fdf4';
+                        healthStatus.style.borderColor = '#bbf7d0';
+                        healthStatus.style.color = '#166534';
+                        healthStatus.innerHTML = `✅ <b>Template Healthy:</b> Detected ${data.variables.length} variables. Ready to generate.`;
+                        
                         dynamicForm.style.display = 'block';
                         varsDiv.style.display = 'block';
                         dynamicFields.innerHTML = '';
