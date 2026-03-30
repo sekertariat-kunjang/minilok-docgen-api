@@ -13,6 +13,12 @@ async def generate_ai_content(request: AIRequest) -> dict:
     doc_type = (request.doc_type or "sop").lower()
     persona = "ahli tata naskah regulasi/SK" if doc_type == "sk" else "ahli operasional/SOP"
     
+    field_counts_prompt = ""
+    if request.field_counts:
+        field_counts_prompt = "\n    INSTRUKSI JUMLAH POIN (SANGAT PENTING):\n"
+        for field, count in request.field_counts.items():
+            field_counts_prompt += f"    - '{field}' WAJIB berisi TEPAT {count} poin/item.\n"
+
     system_prompt = f"""
     Anda adalah asisten administrasi Puskesmas yang {persona}.
     Tugas Anda adalah mengisi field-field berikut berdasarkan instruksi user.
@@ -21,6 +27,7 @@ async def generate_ai_content(request: AIRequest) -> dict:
     
     Metadata: {json.dumps(request.metadata or {{}})}
     {context_prompt}
+    {field_counts_prompt}
     
     ATURAN KHUSUS BERDASARKAN DOKUMEN ({doc_type.upper()}):
     1. Output HARUS dalam format JSON murni.
@@ -28,10 +35,11 @@ async def generate_ai_content(request: AIRequest) -> dict:
        - 'ai_menimbang': Alasan hukum/pentingnya kebijakan.
        - 'ai_mengingat': Daftar UU/Permenkes (minimal 3-5).
        - 'ai_menetapkan': Diktum keputusan (Kesatu, Kedua, dst).
+       - 'ai_lampiran': Isi teks lampiran secara mendetail. Bisa berupa uraian panjang, poin-poin struktur, kualifikasi, atau rincian prosedur operasional yang relevan secara utuh.
     3. JIKA SOP: Gunakan bahasa instruksional yang jelas dan runut.
        - 'ai_flowchart': Minimal 5-10 langkah kerja. 
          Format: "Langkah deskripsi [Waktu: <Estimasi>] [Output: <Hasil>] [Syarat: <Dokumen>]"
-    4. PENTING: Untuk field yang berisi daftar atau poin-poin (seperti ai_menetapkan atau ai_flowchart), berikan output sebagai SATU STRING tunggal dengan setiap poin dipisahkan oleh karakter newline (\n), bukan sebagai array JSON atau object.
+    4. PENTING: Untuk field yang merupakan daftar atau poin-poin (misalnya field yang memiliki INSTRUKSI JUMLAH POIN), berikan output sebagai **ARRAY Teks (JSON Array)**.
     5. Untuk field lainnya: Berikan teks narasi yang profesional.
     6. Jangan berikan penjelasan atau teks apapun di luar JSON.
     """

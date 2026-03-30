@@ -927,6 +927,71 @@
                 }
             }
 
+            function createListItem(key, value) {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'list-item-row';
+                itemDiv.style.display = 'flex';
+                itemDiv.style.gap = '0.5rem';
+                itemDiv.style.marginBottom = '0.5rem';
+                
+                const input = document.createElement('textarea');
+                input.className = 'val-input list-val-input';
+                if (key.startsWith('ai_')) input.classList.add('ai-input');
+                input.value = value;
+                input.style.flex = '1';
+                input.style.padding = '0.5rem';
+                input.style.resize = 'vertical';
+                input.style.fontFamily = 'inherit';
+                input.style.minHeight = '60px'; // good size for list item
+                
+                const delBtn = document.createElement('button');
+                delBtn.type = 'button';
+                delBtn.innerHTML = '🗑️';
+                delBtn.className = 'btn text-danger';
+                delBtn.style.padding = '0.5rem';
+                delBtn.style.background = 'transparent';
+                delBtn.style.border = '1px solid #ef4444';
+                delBtn.onclick = () => { if(itemDiv.parentElement.children.length > 1) itemDiv.remove(); };
+                
+                itemDiv.appendChild(input);
+                itemDiv.appendChild(delBtn);
+                return itemDiv;
+            }
+
+            function addListItem(btn, key) {
+                let container = btn.parentElement.previousElementSibling;
+                // If the DOM matches the new structure where controls are in a sibling div
+                if (!container || !container.classList.contains('dynamic-list-container')) {
+                    container = document.querySelector(`.dynamic-list-container[data-key="${key}"]`);
+                }
+                if (container) {
+                    container.appendChild(createListItem(key, ""));
+                    // Auto update the number input
+                    const countInput = document.querySelector(`.list-count-input[data-key="${key}"]`);
+                    if (countInput) countInput.value = container.children.length;
+                }
+            }
+
+            function syncListRows(input, key) {
+                const targetCount = parseInt(input.value) || 1;
+                const container = document.querySelector(`.dynamic-list-container[data-key="${key}"]`);
+                if (!container) return;
+                
+                let currentCount = container.children.length;
+                
+                if (targetCount > currentCount) {
+                    for (let i = currentCount; i < targetCount; i++) {
+                        container.appendChild(createListItem(key, ""));
+                    }
+                } else if (targetCount < currentCount) {
+                    for (let i = currentCount; i > targetCount; i--) {
+                        if (container.lastElementChild) {
+                            container.lastElementChild.remove();
+                        }
+                    }
+                }
+            }
+
             async function toggleInputs() {
                 const template = document.getElementById('template').value;
                 if (!template) return;
@@ -994,35 +1059,68 @@
                             label.innerText = v.replace(/_/g, ' ');
                             if (v.startsWith('ai_')) label.style.color = '#7c3aed';
 
-                            const input = document.createElement('textarea');
-                            input.className = 'val-input';
-                            input.dataset.key = v;
-                            input.placeholder = v.startsWith('ai_') ? `AI will fill ${v}...` : `Enter ${v}...`;
-                            input.style.padding = '0.5rem';
-                            input.style.width = '100%';
+                            // 3. List Input UI Logic (Strict _ol_ detection)
+                            const isList = v.toLowerCase().includes('_ol_');
 
-                            // Larger text areas for SK fields
-                            if (v.includes('menimbang') || v.includes('mengingat') || v.includes('menetapkan')) {
-                                input.style.minHeight = '150px';
+                            if (isList) {
+                                const listContainer = document.createElement('div');
+                                listContainer.className = 'dynamic-list-container';
+                                listContainer.dataset.key = v;
+                                listContainer.appendChild(createListItem(v, ""));
+                                
+                                const ctrlContainer = document.createElement('div');
+                                ctrlContainer.style.display = 'flex';
+                                ctrlContainer.style.alignItems = 'center';
+                                ctrlContainer.style.gap = '0.5rem';
+                                ctrlContainer.style.marginTop = '0.5rem';
+                                
+                                ctrlContainer.innerHTML = `
+                                    <button type="button" class="btn btn-outline btn-sm" onclick="addListItem(this, '${v}')" style="font-size: 0.7rem; padding: 0.3rem 0.6rem; border-color: #cbd5e1; color: #64748b; background: rgba(0,0,0,0.2);">➕ Tambah Baris</button>
+                                    <span style="font-size: 0.7rem; color:#64748b;">|</span>
+                                    <label style="margin:0; text-transform:none; font-size:0.7rem;">Target Poin AI:</label>
+                                    <input type="number" class="list-count-input" data-key="${v}" value="3" min="1" max="20" style="width: 60px; padding: 0.2rem 0.5rem; background: rgba(0,0,0,0.2); border: 1px solid #cbd5e1; border-radius: 6px; color: white; font-size: 0.8rem;" onchange="syncListRows(this, '${v}')">
+                                `;
+                                
+                                group.appendChild(label);
+                                group.appendChild(listContainer);
+                                group.appendChild(ctrlContainer);
+                                
+                                // Sync rows immediately to match default '3'
+                                setTimeout(() => {
+                                    const inp = document.querySelector(`.list-count-input[data-key="${v}"]`);
+                                    if(inp) syncListRows(inp, v);
+                                }, 50);
                             } else {
-                                input.style.minHeight = '60px';
+                                const input = document.createElement('textarea');
+                                input.className = 'val-input';
+                                input.dataset.key = v;
+                                input.placeholder = v.startsWith('ai_') ? `AI will fill ${v}...` : `Enter ${v}...`;
+                                input.style.padding = '0.5rem';
+                                input.style.width = '100%';
+                                input.style.resize = 'vertical';
+                                input.style.fontFamily = 'inherit';
+                                // Larger text areas for specific fields
+                                if (v.includes('menimbang') || v.includes('mengingat') || v.includes('menetapkan')) {
+                                    input.style.minHeight = '150px';
+                                } else if (v.includes('lampiran')) {
+                                    input.style.minHeight = '250px';
+                                } else {
+                                    input.style.minHeight = '60px'; // default for all normal fields
+                                }
+                                
+                                if (!v.startsWith('ai_') && currentProfile[v]) {
+                                    input.value = currentProfile[v];
+                                    input.classList.add('profile-input');
+                                }
+
+                                if (v.startsWith('ai_')) {
+                                    input.classList.add('ai-input');
+                                }
+
+                                group.appendChild(label);
+                                group.appendChild(input);
                             }
-
-                            input.style.resize = 'vertical';
-                            input.style.fontFamily = 'inherit';
-
-                            // AUTO-FILL FROM PROFILE (Skip for AI fields)
-                            if (!v.startsWith('ai_') && currentProfile[v]) {
-                                input.value = currentProfile[v];
-                                input.classList.add('profile-input');
-                            }
-
-                            if (v.startsWith('ai_')) {
-                                input.classList.add('ai-input');
-                            }
-
-                            group.appendChild(label);
-                            group.appendChild(input);
+                            
                             dynamicFields.appendChild(group);
                         });
                     } else {
@@ -1174,10 +1272,14 @@
                     return;
                 }
 
-                const aiInputs = document.querySelectorAll('.ai-input');
-                const fields = Array.from(aiInputs).map(input => input.dataset.key);
+                // Get all AI keys
+                const allElements = document.querySelectorAll('[data-key]');
+                const fields = Array.from(allElements)
+                                   .map(el => el.dataset.key)
+                                   .filter(k => k && k.startsWith('ai_'));
+                const uniqueFields = [...new Set(fields)];
 
-                if (fields.length === 0) {
+                if (uniqueFields.length === 0) {
                     alert("No fields detected for AI Magic.");
                     return;
                 }
@@ -1189,16 +1291,26 @@
 
                 const context = document.getElementById('ai-context') ? document.getElementById('ai-context').value.trim() : "";
 
+                // Collect target field_counts for AI
+                const fieldCounts = {};
+                document.querySelectorAll('.list-count-input').forEach(input => {
+                    const key = input.dataset.key;
+                    if(uniqueFields.includes(key)) {
+                        fieldCounts[key] = parseInt(input.value) || 3;
+                    }
+                });
+
                 try {
                     const response = await fetch('/generate-ai', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             instruction,
-                            fields,
+                            fields: uniqueFields,
                             metadata: currentProfile,
                             context: context || null,
-                            doc_type: currentTab // Pass current tab as type (sop/sk)
+                            doc_type: currentTab, // Pass current tab as type (sop/sk)
+                            field_counts: fieldCounts
                         })
                     });
 
@@ -1207,22 +1319,44 @@
                     const result = await response.json();
 
                     // Fill fields with animation
-                    aiInputs.forEach(input => {
-                        const key = input.dataset.key;
+                    uniqueFields.forEach(key => {
                         let val = result[key];
                         if (val !== undefined && val !== null) {
-                            if (Array.isArray(val)) {
-                                input.value = val.join('\n');
-                            } else if (typeof val === 'object') {
-                                // Convert object to readable string (e.g. for diktums)
-                                input.value = Object.entries(val)
-                                    .map(([k, v]) => `${k}: ${v}`)
-                                    .join('\n');
+                            const listContainer = document.querySelector(`.dynamic-list-container[data-key="${key}"]`);
+                            if (listContainer) {
+                                listContainer.innerHTML = ''; // clear existing
+                                let items = [];
+                                if (Array.isArray(val)) {
+                                    items = val;
+                                } else if (typeof val === 'object') {
+                                    items = Object.values(val);
+                                } else {
+                                    items = extractStepsFromText(val);
+                                    if(items.length === 0) items = [val];
+                                }
+                                
+                                items.forEach(item => {
+                                    if(item) {
+                                        const li = createListItem(key, item);
+                                        li.querySelector('textarea').style.transition = 'all 0.5s';
+                                        listContainer.appendChild(li);
+                                    }
+                                });
+                                if(listContainer.children.length === 0) {
+                                    listContainer.appendChild(createListItem(key, ""));
+                                }
                             } else {
-                                input.value = val;
+                                // Normal input
+                                const input = document.querySelector(`.val-input[data-key="${key}"]:not(.list-val-input)`);
+                                if (input) {
+                                    if (Array.isArray(val)) input.value = val.join('\n');
+                                    else if (typeof val === 'object') input.value = Object.entries(val).map(([k, v]) => `${k}: ${v}`).join('\n');
+                                    else input.value = val;
+                                    
+                                    input.classList.add('ai-input');
+                                    input.style.transition = 'all 0.5s';
+                                }
                             }
-                            input.classList.add('ai-input');
-                            input.style.transition = 'all 0.5s';
                         }
                     });
 
@@ -1350,10 +1484,19 @@
                 statusDiv.style.background = "#f8fafc";
 
                 let data = {};
-                // Collect data from dynamic inputs
-                const inputs = document.querySelectorAll('.val-input');
-                inputs.forEach(input => {
+                
+                // Collect data from normal dynamic inputs
+                const normalInputs = document.querySelectorAll('.val-input:not(.list-val-input)');
+                normalInputs.forEach(input => {
                     data[input.dataset.key] = input.value;
+                });
+                
+                // Collect data from dynamic list inputs
+                const listContainers = document.querySelectorAll('.dynamic-list-container');
+                listContainers.forEach(container => {
+                    const key = container.dataset.key;
+                    const items = container.querySelectorAll('.list-val-input');
+                    data[key] = Array.from(items).map(i => i.value.trim()).filter(v => v !== "");
                 });
 
                 // Include official table data if available

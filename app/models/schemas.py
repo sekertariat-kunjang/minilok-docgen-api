@@ -11,6 +11,7 @@ class AIRequest(BaseModel):
     metadata: Optional[Dict[str, Any]] = None
     context: Optional[str] = None
     doc_type: Optional[str] = "sop" # 'sop' or 'sk'
+    field_counts: Optional[Dict[str, int]] = None
 
 class SOPTableRequest(BaseModel):
     prosedur_steps: List[Any]

@@ -114,13 +114,60 @@ class DocxProcessor:
                     merged_data[key] = "[Flowchart error]"
 
     def _inject_list_helpers(self, merged_data: Dict[str, Any]):
+        from docxtpl import RichText
+        import re
+
         list_helpers = {}
-        for key, value in merged_data.items():
+        for key, value in list(merged_data.items()):
             target_key = key if key.endswith('_list') else f"{key}_list"
-            if isinstance(value, list):
-                list_helpers[target_key] = value
-            elif isinstance(value, str) and '\n' in value:
-                list_helpers[target_key] = [line.strip() for line in value.split('\n') if line.strip()]
+            
+            is_array = isinstance(value, list)
+            is_multiline = isinstance(value, str) and '\n' in value
+            
+            # Only format as single-tag RichText if the key explicitely has _ol_ suffix
+            # For backward compatibility, fields without _ol_ remain as standard lists for {% tr %} loops
+            is_ol_field = "_ol_" in key.lower()
+            
+            if is_array or is_multiline:
+                raw_list = value if is_array else [line.strip() for line in value.split('\n') if line.strip()]
+                list_helpers[target_key] = raw_list
+                
+                # If it's a designated single-tag field, convert array into formatted string with line breaks
+                # We intentionally don't use RichText because simple strings joined by \n perfectly 
+                # inherit the font, color, and size of the {{ tag }} from the Word template.
+                if is_ol_field:
+                    formatted_collection = []
+                    letters = 'abcdefghijklmnopqrstuvwxyz'
+                    dictums = ['KESATU', 'KEDUA', 'KETIGA', 'KEEMPAT', 'KELIMA', 'KEENAM', 'KETUJUH', 'KEDELAPAN', 'KESEMBILAN', 'KESEPULUH']
+                    
+                    suffix = key.lower().split('_ol_')[-1] if '_ol_' in key.lower() else '1'
+                    
+                    for i, item in enumerate(raw_list):
+                        item_text = item.get('langkah', str(item)) if isinstance(item, dict) else str(item)
+                        
+                        # Fix stray literal "\n" or actual newlines that shouldn't be inside a single item
+                        item_text = item_text.replace('\\n', ' ').replace('\n', ' ')
+                        
+                        # Clean pre-existing random starting counters from AI or Frontend
+                        item_text = re.sub(r'^\d+[\.\)\s]+', '', item_text).strip()
+                        item_text = re.sub(r'^[a-z]\s*[\.\)]\s+', '', item_text, flags=re.IGNORECASE).strip()
+                        item_text = re.sub(r'^(KESATU|KEDUA|KETIGA|KEEMPAT|KELIMA|KEENAM|KETUJUH)\s*[:\.]\s+', '', item_text, flags=re.IGNORECASE).strip()
+                        
+                        prefix = ""
+                        if suffix == 'a':
+                            prefix = f"{letters[i % 26]}. "
+                        elif suffix == 'kesatu':
+                            idx = i if i < len(dictums) else len(dictums)-1
+                            prefix = f"{dictums[idx]}: "
+                        else:
+                            prefix = f"{i+1}. " # default to 1.
+                            
+                        formatted_collection.append(f"{prefix}{item_text}")
+                    
+                    # Join with actual newlines; docxtpl translates \n into internal Word soft breaks
+                    merged_data[key] = '\n'.join(formatted_collection)
+            
             elif isinstance(value, str):
                 list_helpers[target_key] = [value]
+                
         merged_data.update(list_helpers)
