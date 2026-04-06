@@ -401,6 +401,32 @@
             font-family: 'Courier New', Courier, monospace;
             font-size: 0.9em;
         }
+
+        /* Flowchart Toggle Styles */
+        .style-toggle {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            width: fit-content;
+        }
+
+        .style-btn {
+            padding: 6px 16px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+
+        .style-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px var(--primary-glow);
+        }
     </style>
 </head>
 
@@ -612,9 +638,16 @@
                         <label
                             style="color: #60a5fa; margin: 0; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.08em;">📋
                             Official SOP Table Preview (Formal Format)</label>
-                        <button onclick="refreshFlowchartPreview()"
-                            style="background: rgba(96,165,250,0.2); border: 1px solid rgba(96,165,250,0.4); color: #60a5fa; padding: 0.3rem 0.75rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 700;">🔄
-                            Refresh Table</button>
+                        
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div class="style-toggle" id="flowchart-style-toggle">
+                                <div class="style-btn active" onclick="setFlowchartStyle('table', this)">Table Format</div>
+                                <div class="style-btn" onclick="setFlowchartStyle('pure', this)">Pure Diagram</div>
+                            </div>
+                            <button onclick="refreshFlowchartPreview()"
+                                style="background: rgba(96,165,250,0.2); border: 1px solid rgba(96,165,250,0.4); color: #60a5fa; padding: 0.3rem 0.75rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 700;">🔄
+                                Refresh Table</button>
+                        </div>
                     </div>
                     <div id="flowchart-img-container" style="text-align: center;">
                         <p style="color: #64748b; font-size: 0.8rem;">Klik <b>🔄 Refresh</b> atau <b>Magic Fill</b>
@@ -1179,6 +1212,27 @@
 
             // ---------- AI MAGIC ----------
             let globalSopTableData = null;
+            let currentFlowchartStyle = 'table';
+
+            function setFlowchartStyle(style, btn) {
+                currentFlowchartStyle = style;
+                // Update UI toggle
+                document.querySelectorAll('#flowchart-style-toggle .style-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Update refresh button text based on style
+                const refreshBtn = document.querySelector('#flowchart-preview-section button');
+                if (style === 'pure') {
+                    refreshBtn.innerHTML = '🔄 Refresh Diagram';
+                } else {
+                    refreshBtn.innerHTML = '🔄 Refresh Table';
+                }
+
+                // If we already have data, refresh the preview
+                if (globalSopTableData) {
+                    refreshFlowchartPreview();
+                }
+            }
 
             function extractStepsFromText(text) {
                 if (!text) return [];
@@ -1239,7 +1293,8 @@
                             output: oMatch ? oMatch[1].trim() : '-',
                             syarat: sMatch ? sMatch[1].trim() : '-'
                         };
-                    })
+                    }),
+                    flowchart_style: currentFlowchartStyle
                 };
 
                 await showFlowchartPreview(globalSopTableData);
@@ -1373,12 +1428,13 @@
                     globalSopTableData = {
                         nama_sop: instruction.toUpperCase(),
                         pelaksana_labels: [currentProfile.jabatan || 'Petugas', 'Unit Terkait'],
-                        steps: stepLines.map(line => ({
+                        prosedur_steps: stepLines.map(line => ({
                             langkah: line.replace(/^\d+[\.\)\s]+/, '').trim(),
                             waktu: '2-5 Menit',
                             output: 'Terselesaikan',
                             syarat: 'Dokumen Terkait'
-                        }))
+                        })),
+                        flowchart_style: currentFlowchartStyle
                     };
 
                     // Show formal table preview automatically if we have steps

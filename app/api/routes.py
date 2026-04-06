@@ -16,6 +16,7 @@ from app.services.ai_service import generate_ai_content
 from app.core.config import TEMPLATES_DIR
 from app.core.docx_processor import DocxProcessor
 from app.generators.sop_table_generator import generate_sop_table_image
+from app.generators.pure_flowchart_generator import generate_pure_flowchart_image
 from docxtpl import DocxTemplate
 from app.core.jinja_extensions import patch_docx_tags, get_jinja_env
 from jinja2 import meta
@@ -87,11 +88,17 @@ async def generate_sop_flowchart(request: SOPTableRequest):
     Returns the PNG as binary stream.
     """
     try:
-        png_bytes = generate_sop_table_image(
-            prosedur_steps=request.prosedur_steps,
-            pelaksana_labels=request.pelaksana_labels,
-            nama_sop=request.nama_sop
-        )
+        if request.flowchart_style == "pure":
+            png_bytes = generate_pure_flowchart_image(
+                prosedur_steps=request.prosedur_steps,
+                nama_sop=request.nama_sop
+            )
+        else:
+            png_bytes = generate_sop_table_image(
+                prosedur_steps=request.prosedur_steps,
+                pelaksana_labels=request.pelaksana_labels,
+                nama_sop=request.nama_sop
+            )
         return StreamingResponse(
             io.BytesIO(png_bytes), 
             media_type="image/png"

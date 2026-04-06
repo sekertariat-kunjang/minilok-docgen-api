@@ -9,6 +9,7 @@ import re
 from docx.shared import Mm
 from app.core.config import TEMPLATES_DIR
 from app.generators.sop_table_generator import generate_sop_table_image
+from app.generators.pure_flowchart_generator import generate_pure_flowchart_image
 from typing import Dict, Any
 
 class DocxProcessor:
@@ -56,14 +57,22 @@ class DocxProcessor:
         try:
             table_data = merged_data["ai_sop_table_data"]
             steps = table_data.get("prosedur_steps", [])
-            pelaksana = table_data.get("pelaksana_labels", ["Pelaksana 1", "Pelaksana 2"])
             judul = table_data.get("nama_sop", merged_data.get("nama_sop", "SOP"))
+            style = table_data.get("flowchart_style", "table")
             
-            png_bytes = generate_sop_table_image(
-                prosedur_steps=steps,
-                pelaksana_labels=pelaksana,
-                nama_sop=judul
-            )
+            if style == "pure":
+                print(f"    [INFO] Using 'pure' visual flowchart style")
+                png_bytes = generate_pure_flowchart_image(
+                    prosedur_steps=steps,
+                    nama_sop=judul
+                )
+            else:
+                print(f"    [INFO] Using 'table' formal SOP style")
+                png_bytes = generate_sop_table_image(
+                    prosedur_steps=steps,
+                    pelaksana_labels=pelaksana,
+                    nama_sop=judul
+                )
             img_stream = io.BytesIO(png_bytes)
             merged_data["ai_flowchart"] = InlineImage(self.doc, image_descriptor=img_stream, width=Mm(170))
             print("    [OK] Formal SOP Table generated and injected into 'ai_flowchart'")

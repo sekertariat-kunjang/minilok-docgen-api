@@ -17,3 +17,4 @@ class SOPTableRequest(BaseModel):
     prosedur_steps: List[Any]
     pelaksana_labels: List[str] = ["Pelaksana 1", "Pelaksana 2"]
     nama_sop: str = "SOP"
+    flowchart_style: Optional[str] = "table" # 'table' or 'pure'
