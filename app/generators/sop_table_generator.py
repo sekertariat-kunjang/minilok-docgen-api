@@ -114,11 +114,11 @@ def generate_sop_table_image(
     img = Image.new('RGB', (W, H), color='white')
     draw = ImageDraw.Draw(img)
 
-    fn = _load_font(13 * SCALE)
-    fn_bold = _load_bold_font(14 * SCALE)
-    fn_sm = _load_font(13 * SCALE)
-    fn_title = _load_bold_font(13 * SCALE)
-    fn_header = _load_bold_font(13 * SCALE)
+    fn = _load_font(11 * SCALE)
+    fn_bold = _load_bold_font(12 * SCALE)
+    fn_sm = _load_font(11 * SCALE)
+    fn_title = _load_bold_font(11 * SCALE)
+    fn_header = _load_bold_font(11 * SCALE)
 
     BORDER = "black"
     HEADER_BG = "white"
@@ -239,8 +239,14 @@ def generate_sop_table_image(
             target_col = step.get('pelaksana_index', 0) if isinstance(step, dict) else 0
             
             if i == target_col:
-                # 'start_end' for first and last rows, 'process' for middle
-                sym_type = 'start_end' if row_idx == 0 or row_idx == n_rows - 1 else 'process'
+                # Use provided type if available, fallback to positional defaults
+                provided_type = step.get('type') if isinstance(step, dict) else None
+                if provided_type:
+                    sym_type = provided_type
+                elif row_idx == 0 or row_idx == n_rows - 1:
+                    sym_type = 'start_end'
+                else:
+                    sym_type = 'process'
                 cx = cols['pel'][i] + col_pel // 2
                 cy = y_row + row_h_step // 2
                 

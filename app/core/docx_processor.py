@@ -70,7 +70,7 @@ class DocxProcessor:
                 print(f"    [INFO] Using 'table' formal SOP style")
                 png_bytes = generate_sop_table_image(
                     prosedur_steps=steps,
-                    pelaksana_labels=pelaksana,
+                    pelaksana_labels=table_data.get("pelaksana_labels", ["Petugas", "Unit Terkait"]),
                     nama_sop=judul
                 )
             img_stream = io.BytesIO(png_bytes)

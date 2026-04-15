@@ -427,6 +427,59 @@
             color: white;
             box-shadow: 0 2px 8px var(--primary-glow);
         }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            padding: 2rem;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .structure-row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.75rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .decision-fields {
+            display: none;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        .structure-row.is-decision .decision-fields {
+            display: flex;
+        }
+
+        .structure-row.is-decision .next-field {
+            display: none;
+        }
     </style>
 </head>
 
@@ -700,6 +753,26 @@
                 </div>
             </div> <!-- End bulk-pane -->
         </div> <!-- End container -->
+
+        <!-- Structure Builder Modal -->
+        <div id="structure-modal" class="modal-overlay">
+            <div class="modal-content">
+                <h3 style="margin-top:0;">🌳 Flowchart Structure Builder</h3>
+                <p style="font-size:0.8rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+                    Definisikan "tulang" alur. AI akan mengisi teks profesional untuk setiap kotak.
+                </p>
+                
+                <div id="structure-list">
+                    <!-- Rows will be added here -->
+                </div>
+
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                    <button onclick="addStructureRow()" class="btn btn-outline" style="flex:1;">➕ Tambah Langkah</button>
+                    <button onclick="saveStructure()" class="btn btn-primary" style="flex:1;">💾 Simpan Struktur</button>
+                </div>
+                <button onclick="closeStructureModal()" style="position:absolute; top:1.5rem; right:1.5rem; background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:1.2rem;">&times;</button>
+            </div>
+        </div>
 
         <script>
             // Initial load
@@ -1109,6 +1182,7 @@
                                 
                                 ctrlContainer.innerHTML = `
                                     <button type="button" class="btn btn-outline btn-sm" onclick="addListItem(this, '${v}')" style="font-size: 0.7rem; padding: 0.3rem 0.6rem; border-color: #cbd5e1; color: #64748b; background: rgba(0,0,0,0.2);">➕ Tambah Baris</button>
+                                    <button type="button" class="btn btn-outline btn-sm" onclick="openStructureModal('${v}')" style="font-size: 0.7rem; padding: 0.3rem 0.6rem; border-color: #7c3aed; color: #7c3aed; background: rgba(124, 58, 237, 0.1);">🌳 Atur Cabang</button>
                                     <span style="font-size: 0.7rem; color:#64748b;">|</span>
                                     <label style="margin:0; text-transform:none; font-size:0.7rem;">Target Poin AI:</label>
                                     <input type="number" class="list-count-input" data-key="${v}" value="3" min="1" max="20" style="width: 60px; padding: 0.2rem 0.5rem; background: rgba(0,0,0,0.2); border: 1px solid #cbd5e1; border-radius: 6px; color: white; font-size: 0.8rem;" onchange="syncListRows(this, '${v}')">
@@ -1193,6 +1267,90 @@
 
             function removeField(id) {
                 document.getElementById(id).remove();
+            }
+
+            // --- Structure Builder Logic ---
+            let currentStructureKey = null;
+            let fieldStructures = {}; // Key: { [fieldName]: [steps] }
+
+            function openStructureModal(key) {
+                currentStructureKey = key;
+                const modal = document.getElementById('structure-modal');
+                const list = document.getElementById('structure-list');
+                list.innerHTML = '';
+                modal.style.display = 'flex';
+
+                const existing = fieldStructures[key] || [
+                    { id: 1, type: 'process', next: 2 },
+                    { id: 2, type: 'process', next: 3 },
+                    { id: 3, type: 'start_end', next: null }
+                ];
+
+                existing.forEach(s => addStructureRow(s));
+            }
+
+            function closeStructureModal() {
+                document.getElementById('structure-modal').style.display = 'none';
+            }
+
+            function addStructureRow(data = null) {
+                const list = document.getElementById('structure-list');
+                const rowId = 'struct-row-' + Date.now() + Math.random();
+                const div = document.createElement('div');
+                div.className = 'structure-row';
+                if (data && data.type === 'decision') div.classList.add('is-decision');
+                div.id = rowId;
+
+                const id = data ? data.id : (list.children.length + 1);
+                
+                div.innerHTML = `
+                    <div style="font-weight:bold; color:var(--primary); width:30px;">${id}</div>
+                    <select class="struct-type" onchange="this.parentElement.classList.toggle('is-decision', this.value==='decision')" style="width:110px; padding:0.4rem; font-size:0.8rem;">
+                        <option value="process" ${data?.type==='process'?'selected':''}>Proses</option>
+                        <option value="decision" ${data?.type==='decision'?'selected':''}>Keputusan</option>
+                        <option value="start_end" ${data?.type==='start_end'?'selected':''}>Selesai</option>
+                    </select>
+                    <input type="text" class="struct-label" placeholder="Label/Tanya (Opsional)" value="${data?.label||''}" style="flex:1; padding:0.4rem; font-size:0.8rem;">
+                    
+                    <div class="next-field" style="width:80px;">
+                        <input type="number" class="struct-next" placeholder="Next" value="${data?.next||(id+1)}" style="padding:0.4rem; font-size:0.8rem;">
+                    </div>
+                    
+                    <div class="decision-fields">
+                        <input type="number" class="struct-yes" placeholder="If Ya" value="${data?.yes||(id+1)}" style="width:50px; padding:0.4rem; font-size:0.8rem;">
+                        <input type="number" class="struct-no" placeholder="If No" value="${data?.no||''}" style="width:50px; padding:0.4rem; font-size:0.8rem;">
+                    </div>
+
+                    <button onclick="this.parentElement.remove()" style="background:none; border:none; color:#ef4444; cursor:pointer;">&times;</button>
+                `;
+                list.appendChild(div);
+            }
+
+            function saveStructure() {
+                const list = document.getElementById('structure-list');
+                const steps = [];
+                Array.from(list.children).forEach(row => {
+                    const id = parseInt(row.querySelector('div').innerText);
+                    const type = row.querySelector('.struct-type').value;
+                    const label = row.querySelector('.struct-label').value;
+                    const next = parseInt(row.querySelector('.struct-next').value) || null;
+                    const yes = parseInt(row.querySelector('.struct-yes').value) || null;
+                    const no = parseInt(row.querySelector('.struct-no').value) || null;
+
+                    steps.push({ id, type, label, next, yes, no });
+                });
+
+                fieldStructures[currentStructureKey] = steps;
+                
+                // Update the "Target Poin AI" count input to match structure length
+                const countInput = document.querySelector(`.list-count-input[data-key="${currentStructureKey}"]`);
+                if (countInput) {
+                    countInput.value = steps.length;
+                    syncListRows(countInput, currentStructureKey);
+                }
+
+                alert(`Struktur untuk ${currentStructureKey} disimpan!`);
+                closeStructureModal();
             }
 
             function clearMagic() {
@@ -1365,7 +1523,8 @@
                             metadata: currentProfile,
                             context: context || null,
                             doc_type: currentTab, // Pass current tab as type (sop/sk)
-                            field_counts: fieldCounts
+                            field_counts: fieldCounts,
+                            structure: fieldStructures
                         })
                     });
 

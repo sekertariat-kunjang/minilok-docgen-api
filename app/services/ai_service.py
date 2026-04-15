@@ -19,6 +19,20 @@ async def generate_ai_content(request: AIRequest) -> dict:
         for field, count in request.field_counts.items():
             field_counts_prompt += f"    - '{field}' WAJIB berisi TEPAT {count} poin/item.\n"
 
+    structure_prompt = ""
+    if request.structure:
+        structure_prompt = "\n    INSTRUKSI STRUKTUR FLOWCHART (WAJIB DIIKUTI):\n"
+        for field, steps in request.structure.items():
+            structure_prompt += f"    - Untuk field '{field}', ikuti alur logis berikut ini:\n"
+            for step in steps:
+                s_type = step.get('type', 'process')
+                s_id = step.get('id')
+                if s_type == 'decision':
+                    label = step.get('label', 'Pertanyaan keputusan')
+                    structure_prompt += f"      {s_id}. [KEPUTUSAN: {label}] -> Jika Ya ke {step.get('yes')}, Jika Tidak ke {step.get('no')}\n"
+                else:
+                    structure_prompt += f"      {s_id}. [PROSES] -> Lanjut ke {step.get('next')}\n"
+
     system_prompt = f"""
     Anda adalah asisten administrasi Puskesmas yang {persona}.
     Tugas Anda adalah mengisi field-field berikut berdasarkan instruksi user.
@@ -28,6 +42,7 @@ async def generate_ai_content(request: AIRequest) -> dict:
     Metadata: {json.dumps(request.metadata or {{}})}
     {context_prompt}
     {field_counts_prompt}
+    {structure_prompt}
     
     ATURAN KHUSUS BERDASARKAN DOKUMEN ({doc_type.upper()}):
     1. Output HARUS dalam format JSON murni.
