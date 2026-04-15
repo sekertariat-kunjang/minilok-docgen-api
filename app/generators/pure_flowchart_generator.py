@@ -85,8 +85,8 @@ def generate_pure_flowchart_image(
     PADDING_H = 50
     
     # Pre-calculate heights
-    fn = _load_font(11 * SCALE)
-    fn_bold = _load_bold_font(12 * SCALE)
+    fn = _load_font(14 * SCALE)
+    fn_bold = _load_bold_font(16 * SCALE)
     
     # Create temp draw to measure text
     temp_img = Image.new('RGB', (1, 1))

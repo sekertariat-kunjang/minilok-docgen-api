@@ -102,8 +102,8 @@ def generate_sop_table_image(
 
     total_w = col_no + col_uraian + (col_pel * n_pel) + col_syarat + col_waktu + col_output + col_ket + 2
 
-    row_h_header = 50
-    row_h_step = 90
+    row_h_header = 60
+    row_h_step = 110
 
     total_h = 10 + row_h_header + n_rows * row_h_step + 10  # header + rows + padding
 
@@ -114,11 +114,11 @@ def generate_sop_table_image(
     img = Image.new('RGB', (W, H), color='white')
     draw = ImageDraw.Draw(img)
 
-    fn = _load_font(11 * SCALE)
-    fn_bold = _load_bold_font(12 * SCALE)
-    fn_sm = _load_font(11 * SCALE)
-    fn_title = _load_bold_font(11 * SCALE)
-    fn_header = _load_bold_font(11 * SCALE)
+    fn = _load_font(14 * SCALE)
+    fn_bold = _load_bold_font(16 * SCALE)
+    fn_sm = _load_font(14 * SCALE)
+    fn_title = _load_bold_font(14 * SCALE)
+    fn_header = _load_bold_font(14 * SCALE)
 
     BORDER = "black"
     HEADER_BG = "white"
