@@ -31,9 +31,15 @@ if not exist ".env" (
     echo.
 )
 
-:: 3. Inform User
+:: 3. Check and free port 8000 if already used
 echo [STEP 1] Menyiapkan environment... [OK]
-echo [STEP 2] Membuka Dashboard di Browser...
+echo [STEP 2] Memeriksa port 8000...
+for /f "tokens=5" %%p in ('netstat -ano ^| findstr ":8000 " ^| findstr "LISTENING"') do (
+    echo [INFO] Port 8000 sedang dipakai, menutup proses lama ^(PID %%p^)...
+    taskkill /PID %%p /F /T >nul 2>&1
+)
+timeout /t 1 /nobreak >nul
+echo [STEP 3] Membuka Dashboard di Browser...
 
 :: Launch browser after a short delay to ensure server is ready
 :: This runs in the background
